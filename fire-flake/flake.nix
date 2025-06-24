@@ -32,7 +32,7 @@
         inherit system;
         overlays = [ (import "${inputs.nurpkgs}/overlay.nix") ];
         # allow codeium, copilot, windsurf and obsidian unfree packages
-        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "codeium" "copilot" "windsurf" "obsidian"];
+        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "codeium" "copilot" "windsurf" "obsidian" "claude-code"];
     };
 
     nurpkgs = inputs.nurpkgs.packages.${system};

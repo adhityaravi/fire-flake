@@ -12,6 +12,8 @@
         fzf
         lazygit
         gh
+        pay-respects
+        fast-cli
       ];
       description = "Common CLI tools useful across programs.";
     };

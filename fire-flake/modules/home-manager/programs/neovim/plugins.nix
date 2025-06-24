@@ -83,7 +83,7 @@ with pkgs.vimPlugins; [
   nvim-spectre
   todo-comments-nvim
   grapple-nvim
-  obsidian-nvim
+  # obsidian-nvim
 
   # File explorer
   nvim-tree-lua

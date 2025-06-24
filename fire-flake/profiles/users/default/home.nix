@@ -73,7 +73,7 @@
 
   # Goose CLI
   custom.goose = {
-    enable = true;
+    enable = false;
     # lead model
     leadProvider = "github_copilot";
     leadModel = "gpt-4.1";
