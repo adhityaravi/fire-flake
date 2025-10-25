@@ -14,6 +14,7 @@
     ../../../modules/home-manager/programs/claude-code.nix
     ../../../modules/home-manager/programs/fish.nix
     ../../../modules/home-manager/programs/starship/starship.nix
+    ../../../modules/home-manager/programs/k9s.nix
     ../../../modules/home-manager/common.nix
   ];
 
@@ -51,7 +52,7 @@
   custom.neovim = {
     enable = true;
 
-    obsidianVaultPaths = userVars.obsidian.vaultPaths;
+    # obsidianVaultPaths = userVars.obsidian.vaultPaths;
 
     # Example: Add extra plugins
     #extraPlugins = with pkgs.vimPlugins; [
@@ -67,8 +68,8 @@
 
   # Obsidian
   custom.obsidian = {
-    enable = true;
-    vaultPaths = userVars.obsidian.vaultPaths;
+    enable = false;
+    # vaultPaths = userVars.obsidian.vaultPaths;
   };
 
   # Goose CLI
@@ -98,4 +99,7 @@
 
   # Starship prompt
   custom.starship.enable = true;
+
+  # k9s TUI
+  custom.k9s.enable = true;
 }
