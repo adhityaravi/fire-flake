@@ -1,139 +1,95 @@
--- Override NvChad's telescope themes extension with our working version
--- This provides the same visual experience but uses our persistence mechanism
-
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
 local previewers = require "telescope.previewers"
 
 local conf = require("telescope.config").values
 local actions = require "telescope.actions"
+local action_set = require "telescope.actions.set"
 local action_state = require "telescope.actions.state"
 
--- Function to reload theme using our system
 local function reload_theme(name)
-  local nvconfig = require("nvconfig")
-  nvconfig.base46.theme = name
-  nvconfig.ui.theme = name
-  
+  require("nvconfig").base46.theme = name
   require("base46").load_all_highlights()
-  
-  -- Update lualine
-  pcall(function()
-    if _G.get_nvchad_lualine_theme then
-      require("lualine").setup({
-        options = { theme = _G.get_nvchad_lualine_theme() }
-      })
-    end
-  end)
-  
-  -- Save theme preference
-  local colorscheme_mod = require("plugins.theme.colorscheme")
-  colorscheme_mod.save(name, true)
-  
-  vim.api.nvim_exec_autocmds("User", { pattern = "NvChadThemeReload" })
 end
 
--- Get list of available themes
-local function get_themes()
-  local themes = {}
-  
-  -- Get themes from Base46 directory
-  local theme_path = "/nix/store/7xg81hp0jk2kb295ys1n51bx9cr7dxp5-vimplugin-nvchad-base46-2.5/lua/base46/themes/"
-  local handle = io.popen("ls " .. theme_path .. "*.lua 2>/dev/null")
-  if handle then
-    for line in handle:lines() do
-      local theme_name = line:match("([^/]+)%.lua$")
-      if theme_name then
-        table.insert(themes, theme_name)
-      end
-    end
-    handle:close()
-  end
-  
-  -- Sort themes
-  table.sort(themes)
-  
-  return themes
-end
-
--- Main switcher function with live preview
 local function switcher()
   local bufnr = vim.api.nvim_get_current_buf()
-  local themes = get_themes()
-  local current_theme = require("nvconfig").base46.theme
 
-  -- Create previewer that shows current buffer with applied theme
+  -- show current buffer content in previewer
   local previewer = previewers.new_buffer_previewer {
-    title = "Theme Preview",
     define_preview = function(self, entry)
-      -- Copy current buffer content
+      -- add content
       local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
       vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, lines)
 
-      -- Apply syntax highlighting
+      -- add syntax highlighting in previewer
       local ft = (vim.filetype.match { buf = bufnr } or "diff"):match "%w+"
       require("telescope.previewers.utils").highlighter(self.state.bufnr, ft)
-      
-      -- Apply the theme to see live preview
-      if entry and entry.value then
-        reload_theme(entry.value)
-      end
     end,
   }
 
-  pickers.new({}, {
-    prompt_title = "NvChad Themes",
-    finder = finders.new_table {
-      results = themes,
-      entry_maker = function(theme)
-        return {
-          value = theme,
-          display = theme == current_theme and theme .. " (current)" or theme,
-          ordinal = theme,
-        }
-      end,
-    },
-    sorter = conf.generic_sorter({}),
+  -- our picker function: colors
+  local picker = pickers.new {
+    prompt_title = "󱥚 Set Theme",
     previewer = previewer,
+    finder = finders.new_table {
+      results = require("nvchad.utils").list_themes(),
+    },
+    sorter = conf.generic_sorter(),
+
     attach_mappings = function(prompt_bufnr)
-      -- Live preview on cursor movement
-      local function update_preview()
-        local selection = action_state.get_selected_entry()
-        if selection then
-          reload_theme(selection.value)
-        end
-      end
-
-      -- Override default actions for live preview
-      actions.move_selection_next:replace(function()
-        actions.move_selection_next(prompt_bufnr)
-        update_preview()
+      -- reload theme while typing
+      vim.schedule(function()
+        vim.api.nvim_create_autocmd("TextChangedI", {
+          buffer = prompt_bufnr,
+          callback = function()
+            if action_state.get_selected_entry() then
+              reload_theme(action_state.get_selected_entry()[1])
+            end
+          end,
+        })
       end)
-
+      -- reload theme on cycling
       actions.move_selection_previous:replace(function()
-        actions.move_selection_previous(prompt_bufnr)
-        update_preview()
+        action_set.shift_selection(prompt_bufnr, -1)
+        reload_theme(action_state.get_selected_entry()[1])
+      end)
+      actions.move_selection_next:replace(function()
+        action_set.shift_selection(prompt_bufnr, 1)
+        reload_theme(action_state.get_selected_entry()[1])
       end)
 
-      -- Save theme on enter
+      ------------ save theme on enter ----------------
       actions.select_default:replace(function()
-        local selection = action_state.get_selected_entry()
-        actions.close(prompt_bufnr)
-        
-        if selection then
-          reload_theme(selection.value)
-          vim.notify("✓ Applied NvChad theme: " .. selection.value, vim.log.levels.INFO)
+        if action_state.get_selected_entry() then
+          local theme_name = action_state.get_selected_entry()[1]
+          
+          -- Update nvconfig
+          require("nvconfig").base46.theme = theme_name
+          
+          -- Update chadrc if available
+          local has_chadrc, chadrc = pcall(require, "chadrc")
+          if has_chadrc then
+            chadrc.base46.theme = theme_name
+          end
+          
+          -- Apply theme immediately
+          require("base46").load_all_highlights()
+          
+          -- Save theme preference for persistence
+          local theme_path = vim.fn.stdpath("state") .. "/nvchad_theme"
+          vim.fn.mkdir(vim.fn.fnamemodify(theme_path, ":h"), "p")
+          vim.fn.writefile({ theme_name }, theme_path)
+          actions.close(prompt_bufnr)
         end
       end)
-
       return true
     end,
-  }):find()
+  }
+
+  picker:find()
 end
 
--- Register the extension
 return require("telescope").register_extension {
-  exports = {
-    themes = switcher,
-  },
+  exports = { themes = switcher },
 }

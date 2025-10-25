@@ -2,6 +2,13 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Add fire-flake lua directory to runtime path for our custom modules
+local fire_flake_lua = "/home/ivdi/Repo/fire-flake/fire-flake/modules/home-manager/programs/neovim/lua"
+if vim.fn.isdirectory(fire_flake_lua) == 1 then
+  package.path = package.path .. ";" .. fire_flake_lua .. "/?.lua"
+  package.path = package.path .. ";" .. fire_flake_lua .. "/?/init.lua"
+end
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.expandtab = true
@@ -102,14 +109,50 @@ _G.nvconfig = nvconfig_data
 package.loaded["nvconfig"] = nvconfig_data
 
 local has_base46, base46_err = pcall(require, "base46")
-if has_base46 then
-  print("✓ NvChad Base46 theme system initialized")
-else
-  print("⚠ NvChad Base46 not available, falling back to regular themes")
+-- Base46 loaded silently
+
+-- Load saved NvChad theme
+local function load_saved_theme()
+  local theme_path = vim.fn.stdpath("state") .. "/nvchad_theme"
+  if vim.fn.filereadable(theme_path) == 1 then
+    local theme = vim.fn.readfile(theme_path)[1]
+    if theme and #theme > 0 then
+      -- Update both nvconfig and chadrc
+      require("nvconfig").base46.theme = theme
+      local has_chadrc, chadrc = pcall(require, "chadrc")
+      if has_chadrc then
+        chadrc.base46.theme = theme
+      end
+      
+      -- Apply the theme
+      local has_base46, base46 = pcall(require, "base46")
+      if has_base46 then
+        base46.load_all_highlights()
+      end
+    end
+  end
 end
 
--- Load colorscheme system
-require("plugins.theme.colorscheme").load()
+load_saved_theme()
+
+-- Create Themes command for NvChad themes UI
+vim.api.nvim_create_user_command("Themes", function(args)
+  local has_themes, themes = pcall(require, "nvchad.themes")
+  if not has_themes then
+    vim.notify("NvChad themes not available - using telescope fallback", vim.log.levels.WARN)
+    vim.cmd("Telescope themes")
+    return
+  end
+  
+  local style = args.args and #args.args > 0 and args.args or "bordered"
+  themes.open({ style = style })
+end, {
+  nargs = "?",
+  complete = function()
+    return { "flat", "compact", "bordered" }
+  end,
+  desc = "Open NvChad themes UI (flat, compact, or bordered)"
+})
 
 -- Load all plugin configs - order matters
 -- #todo: lazyload

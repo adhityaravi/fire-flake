@@ -22,6 +22,7 @@ with pkgs.vimPlugins; [
 
   # NvChad Visual Components (from nurpkgs)
   nurpkgs.nvchad-base46
+  nurpkgs.nvchad-volt
   # nurpkgs.nvchad-ui  # Removed - causes telescope themes conflicts
 
   # UX
@@ -42,17 +43,6 @@ with pkgs.vimPlugins; [
   smart-splits-nvim
   leap-nvim
   indent-blankline-nvim
-  # theme
-  catppuccin-nvim
-  rose-pine
-  kanagawa-nvim
-  oxocarbon-nvim
-  everforest
-  gruvbox-nvim
-  nightfox-nvim
-  dracula-nvim
-  monokai-pro-nvim
-  cyberdream-nvim
 
   # Syntax highlighting
   treesitter

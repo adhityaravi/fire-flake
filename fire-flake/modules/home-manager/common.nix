@@ -56,7 +56,6 @@
     networkTools = lib.mkOption {
       type = with lib.types; listOf package;
       default = with pkgs; [
-        dig
         mtr
         nmap
         iperf3
