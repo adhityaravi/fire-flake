@@ -15,6 +15,7 @@
     ../../../modules/home-manager/programs/fish.nix
     ../../../modules/home-manager/programs/starship/starship.nix
     ../../../modules/home-manager/programs/k9s.nix
+    ../../../modules/home-manager/programs/copilot-cli.nix
     ../../../modules/home-manager/common.nix
   ];
 
@@ -74,13 +75,13 @@
 
   # Goose CLI
   custom.goose = {
-    enable = false;
-    # lead model
-    leadProvider = "github_copilot";
-    leadModel = "gpt-4.1";
-    # worker model
-    provider = "anthropic";
-    model = "claude-4-sonnet";
+    enable = false;  # enable when v1.14.0 is released to nixpkgs
+    # # lead model
+    # leadProvider = "github_copilot";
+    # leadModel = "gpt-4.1";
+    # # worker model (using Copilot to avoid Anthropic API costs)
+    # provider = "github_copilot";
+    # model = "gpt-4o";
     #extraEnv = {
     #  GOOSE_TEMPERATURE = "0.7";
     #};
@@ -102,4 +103,7 @@
 
   # k9s TUI
   custom.k9s.enable = true;
+
+  # GitHub Copilot CLI
+  custom.copilot-cli.enable = true;
 }

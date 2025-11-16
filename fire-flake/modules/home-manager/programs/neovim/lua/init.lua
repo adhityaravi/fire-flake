@@ -48,7 +48,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
 -- UI plugins that must initialize on startup
 require("plugins.explorer.oil")
-require("plugins.ui.alpha") -- Keep alpha for now until NvChad integration is stable
+require("plugins.ui.alpha")
 
 -- helper for lazy loading modules on events
 local function lazy_require(event, module, opts)
@@ -86,8 +86,8 @@ local lazy_plugins = {
   "plugins.debug.neotest",
   "plugins.git.git",
   "plugins.ui.persistence",
-  "plugins.ui.lualine",    -- Restored until NvChad integration is stable
-  "plugins.ui.bufferline", -- Restored until NvChad integration is stable
+  "plugins.ui.lualine",
+  "plugins.ui.bufferline",
   "plugins.completion.copilot",
   "plugins.completion.luasnip",
   "plugins.ui.toggleterm",
@@ -106,6 +106,7 @@ local lazy_plugins = {
   "plugins.ux.autosave",
   "plugins.ux.kulala",
   "plugins.ux.goose",
+  "plugins.ux.claude-code",
   "plugins.debug.bqf",
   "plugins.ux.hydra",
   "plugins.ux.whichkey",
