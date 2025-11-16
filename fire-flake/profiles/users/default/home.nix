@@ -75,7 +75,7 @@
 
   # Goose CLI
   custom.goose = {
-    enable = false;  # enable when v1.14.0 is released to nixpkgs
+    enable = false;
     # # lead model
     # leadProvider = "github_copilot";
     # leadModel = "gpt-4.1";

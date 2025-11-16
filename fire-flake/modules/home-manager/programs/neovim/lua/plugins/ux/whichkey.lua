@@ -22,6 +22,6 @@ wk.add({
   { "<leader>o", group = "obsidian", icon = "󰍉" },
   { "<leader>a", group = "AI", icon = "󰧑" },
   { "<leader>aa", group = "claude-code", icon = "" },
-  { "<leader>ag", group = "goose", icon = "🪿" },
+  -- { "<leader>ag", group = "goose", icon = "🪿" },
   { "<leader>ac", group = "copilot", icon = "" },
 })

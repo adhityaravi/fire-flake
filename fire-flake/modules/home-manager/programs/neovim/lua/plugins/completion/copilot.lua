@@ -2,7 +2,7 @@ require("copilot").setup({
   suggestion = {
     enabled = true,
     auto_trigger = true,
-    debounce = 250,
+    debounce = 100,
     keymap = {
       accept = "<Tab>",          -- Accept full suggestion
       accept_word = "<C-Right>", -- Accept one word
