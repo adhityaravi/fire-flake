@@ -68,62 +68,9 @@ local function lsp_status()
 end
 
 
--- lualine
--- Function to get NvChad Base46 colors for lualine theme
-local function get_nvchad_lualine_theme()
-  local has_base46, base46 = pcall(require, "base46")
-  if not has_base46 then
-    return "auto"
-  end
-  
-  -- Try to get Base46 colors
-  local ok, colors = pcall(function()
-    return base46.get_theme_tb("base_30")
-  end)
-  
-  if not ok or not colors then
-    return "auto"
-  end
-  
-  -- Create lualine theme using Base46 colors
-  local nvchad_theme = {
-    normal = {
-      a = { bg = colors.blue, fg = colors.black },
-      b = { bg = colors.one_bg, fg = colors.light_grey },
-      c = { bg = colors.one_bg2, fg = colors.white },
-    },
-    insert = {
-      a = { bg = colors.green, fg = colors.black },
-      b = { bg = colors.one_bg, fg = colors.light_grey },
-    },
-    visual = {
-      a = { bg = colors.purple, fg = colors.black },
-      b = { bg = colors.one_bg, fg = colors.light_grey },
-    },
-    replace = {
-      a = { bg = colors.red, fg = colors.black },
-      b = { bg = colors.one_bg, fg = colors.light_grey },
-    },
-    command = {
-      a = { bg = colors.yellow, fg = colors.black },
-      b = { bg = colors.one_bg, fg = colors.light_grey },
-    },
-    inactive = {
-      a = { bg = colors.one_bg, fg = colors.light_grey },
-      b = { bg = colors.one_bg, fg = colors.light_grey },
-      c = { bg = colors.one_bg, fg = colors.light_grey },
-    },
-  }
-  
-  return nvchad_theme
-end
-
--- Export the theme function for external use
-_G.get_nvchad_lualine_theme = get_nvchad_lualine_theme
-
 require("lualine").setup({
     options = {
-      theme = get_nvchad_lualine_theme(),
+      theme = "auto",
       icons_enabled = true,
       component_separators = { left = "", right = "" },
       section_separators = { left = "", right = "" },

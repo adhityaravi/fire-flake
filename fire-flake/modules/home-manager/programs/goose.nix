@@ -3,12 +3,12 @@
 let
   cfg = config.custom.goose;
   envVars = lib.filterAttrs (n: v: v != null) {
-    GOOSE_PROVIDER = cfg.provider;
-    GOOSE_MODEL = cfg.model;
-    GOOSE_LEAD_MODEL = cfg.leadModel;
-    GOOSE_LEAD_PROVIDER = cfg.leadProvider;
-    GOOSE_PLANNER_MODEL = cfg.plannerModel;
-    GOOSE_PLANNER_PROVIDER = cfg.plannerProvider;
+    # GOOSE_PROVIDER = cfg.provider;
+    # GOOSE_MODEL = cfg.model;
+    # GOOSE_LEAD_MODEL = cfg.leadModel;
+    # GOOSE_LEAD_PROVIDER = cfg.leadProvider;
+    # GOOSE_PLANNER_MODEL = cfg.plannerModel;
+    # GOOSE_PLANNER_PROVIDER = cfg.plannerProvider;
   };
 in
 {

@@ -11,6 +11,7 @@ let
     json
     yaml
     markdown
+    http
   ]);
 in
 
@@ -20,28 +21,28 @@ with pkgs.vimPlugins; [
   nvim-web-devicons
   mini-nvim
 
-  # NvChad Visual Components (from nurpkgs)
-  nurpkgs.nvchad-base46
-  nurpkgs.nvchad-volt
-  # nurpkgs.nvchad-ui  # Removed - causes telescope themes conflicts
+  # Colorschemes
+  everforest
+  vague-nvim
+  doom-one-nvim
 
   # UX
   which-key-nvim
   noice-nvim
   hydra-nvim
   auto-save-nvim
-  nurpkgs.kulala-nvim
-  nurpkgs.goose-nvim
+  # kulala-nvim  # kulala seems to be causing tressitter issues. i dont use it enough to care rn
+  # nurpkgs.goose-nvim  # goose-nvim seems to be not working with the latest goose-cli. disable for now.
   pkgs.vimPlugins.render-markdown-nvim
 
-  # UI (keeping existing until NvChad integration is stable)
-  lualine-nvim         # Restored - working on NvChad integration
+  # UI
+  lualine-nvim
   toggleterm-nvim
-  alpha-nvim           # Restored - working on NvChad integration
+  alpha-nvim
   persistence-nvim
-  bufferline-nvim      # Restored - working on NvChad integration
+  bufferline-nvim
   smart-splits-nvim
-  leap-nvim
+  # leap-nvim
   indent-blankline-nvim
 
   # Syntax highlighting
