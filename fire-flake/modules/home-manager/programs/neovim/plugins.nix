@@ -20,10 +20,10 @@ with pkgs.vimPlugins; [
   nvim-web-devicons
   mini-nvim
 
-  # NvChad Visual Components (from nurpkgs)
-  nurpkgs.nvchad-base46
-  nurpkgs.nvchad-volt
-  # nurpkgs.nvchad-ui  # Removed - causes telescope themes conflicts
+  # Colorschemes
+  everforest
+  vague-nvim
+  doom-one-nvim
 
   # UX
   which-key-nvim
@@ -35,11 +35,11 @@ with pkgs.vimPlugins; [
   pkgs.vimPlugins.render-markdown-nvim
 
   # UI (keeping existing until NvChad integration is stable)
-  lualine-nvim         # Restored - working on NvChad integration
+  lualine-nvim
   toggleterm-nvim
-  alpha-nvim           # Restored - working on NvChad integration
+  alpha-nvim
   persistence-nvim
-  bufferline-nvim      # Restored - working on NvChad integration
+  bufferline-nvim
   smart-splits-nvim
   leap-nvim
   indent-blankline-nvim

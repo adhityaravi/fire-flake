@@ -2,12 +2,12 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- Add fire-flake lua directory to runtime path for our custom modules
-local fire_flake_lua = "/home/ivdi/Repo/fire-flake/fire-flake/modules/home-manager/programs/neovim/lua"
-if vim.fn.isdirectory(fire_flake_lua) == 1 then
-  package.path = package.path .. ";" .. fire_flake_lua .. "/?.lua"
-  package.path = package.path .. ";" .. fire_flake_lua .. "/?/init.lua"
-end
+-- -- Add fire-flake lua directory to runtime path for our custom modules
+-- local fire_flake_lua = "/home/ivdi/Repo/fire-flake/fire-flake/modules/home-manager/programs/neovim/lua"
+-- if vim.fn.isdirectory(fire_flake_lua) == 1 then
+--   package.path = package.path .. ";" .. fire_flake_lua .. "/?.lua"
+--   package.path = package.path .. ";" .. fire_flake_lua .. "/?/init.lua"
+-- end
 
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -20,138 +20,27 @@ vim.opt.termguicolors = true
 vim.opt.fillchars:append({ vert = "│" }) -- or "┃", "▕", etc.
 vim.o.shell = "fish" -- Set default shell to fish
 
--- Initialize NvChad Base46 theme system if available
--- Set up Base46 cache directory BEFORE requiring base46
-local cache_dir = vim.fn.stdpath("cache") .. "/base46/"
-vim.g.base46_cache = cache_dir
-vim.fn.mkdir(cache_dir, "p")
+-- Load saved colorscheme or use default
+local colorscheme_file = vim.fn.stdpath("state") .. "/colorscheme"
+local colorscheme = "doom-one" -- default
 
--- Create complete nvconfig BEFORE requiring base46
-local nvconfig_data = {
-  base46 = {
-    theme = "catppuccin", -- default theme
-    transparency = false,
-    integrations = {},
-    hl_override = {},
-    hl_add = {},
-    changed_themes = {}
-  },
-  ui = {
-    cmp = {
-      icons = true,
-      lspkind_text = true,
-      style = "default",
-      selected_item_bg = "colored"
-    },
-    telescope = { style = "borderless" },
-    statusline = {
-      theme = "default",
-      separator_style = "default",
-      order = nil,
-      modules = nil
-    },
-    tabufline = {
-      enabled = true,
-      lazyload = true,
-      order = { "treeOffset", "buffers", "tabs", "btns" },
-      modules = nil
-    },
-    nvdash = {
-      load_on_startup = false,
-      header = {
-        "           ▄ ▄                   ",
-        "       ▄   ▄▄▄     ▄ ▄▄▄ ▄ ▄     ",
-        "       █ ▄ █▄█ ▄▄▄ █ █▄█ █ █     ",
-        "    ▄▄ █▄█▄▄▄█ █▄█▄█▄▄█▄▄█ █     ",
-        "  ▄ █▄▄█ ▄ ▄▄ ▄█ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄  ",
-        "  █▄▄▄▄ ▄▄▄ █ ▄ ▄▄▄ ▄ ▄▄▄ ▄ ▄ █ ▄",
-        "▄ █ █▄█ █▄█ █ █ █▄█ █ █▄█ ▄▄▄ █ █",
-        "█▄█ ▄ █▄▄█▄▄█ █ ▄▄█ █ ▄ █ █▄█▄█ █",
-        "    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█ █▄█▄▄▄█    ",
-      },
-      buttons = {
-        { "  Find File", "Spc f f", "Telescope find_files" },
-        { "󰈚  Recent Files", "Spc f o", "Telescope oldfiles" },
-        { "󰈭  Find Word", "Spc f w", "Telescope live_grep" },
-        { "  Bookmarks", "Spc m a", "Telescope marks" },
-        { "  Themes", "Spc t h", "Telescope themes" },
-        { "  Mappings", "Spc c h", "NvCheatsheet" },
-      }
-    }
-  },
-  lsp = { 
-    signature = true 
-  },
-  term = {
-    winopts = { number = false, relativenumber = false },
-    sizes = { sp = 0.3, vsp = 0.2, ["bo sp"] = 0.3, ["bo vsp"] = 0.2 },
-    float = {
-      relative = "editor",
-      row = 0.3,
-      col = 0.25,
-      width = 0.5,
-      height = 0.4,
-      border = "single",
-    },
-  },
-  cheatsheet = {
-    theme = "grid",
-    excluded_groups = { "terminal (t)", "autopairs", "Nvim", "Opens" },
-  },
-  mason = { 
-    cmd = true, 
-    pkgs = {} 
-  }
-}
-
--- Store reference globally and make require("nvconfig") return the same table
-_G.nvconfig = nvconfig_data
-package.loaded["nvconfig"] = nvconfig_data
-
-local has_base46, base46_err = pcall(require, "base46")
--- Base46 loaded silently
-
--- Load saved NvChad theme
-local function load_saved_theme()
-  local theme_path = vim.fn.stdpath("state") .. "/nvchad_theme"
-  if vim.fn.filereadable(theme_path) == 1 then
-    local theme = vim.fn.readfile(theme_path)[1]
-    if theme and #theme > 0 then
-      -- Update both nvconfig and chadrc
-      require("nvconfig").base46.theme = theme
-      local has_chadrc, chadrc = pcall(require, "chadrc")
-      if has_chadrc then
-        chadrc.base46.theme = theme
-      end
-      
-      -- Apply the theme
-      local has_base46, base46 = pcall(require, "base46")
-      if has_base46 then
-        base46.load_all_highlights()
-      end
-    end
+if vim.fn.filereadable(colorscheme_file) == 1 then
+  local saved = vim.fn.readfile(colorscheme_file)[1]
+  if saved and #saved > 0 then
+    colorscheme = saved
   end
 end
 
-load_saved_theme()
+vim.cmd([[colorscheme ]] .. colorscheme)
 
--- Create Themes command for NvChad themes UI
-vim.api.nvim_create_user_command("Themes", function(args)
-  local has_themes, themes = pcall(require, "nvchad.themes")
-  if not has_themes then
-    vim.notify("NvChad themes not available - using telescope fallback", vim.log.levels.WARN)
-    vim.cmd("Telescope themes")
-    return
-  end
-  
-  local style = args.args and #args.args > 0 and args.args or "bordered"
-  themes.open({ style = style })
-end, {
-  nargs = "?",
-  complete = function()
-    return { "flat", "compact", "bordered" }
+-- Save colorscheme whenever it changes
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = function()
+    local current = vim.g.colors_name
+    if current then
+      vim.fn.writefile({ current }, colorscheme_file)
+    end
   end,
-  desc = "Open NvChad themes UI (flat, compact, or bordered)"
 })
 
 -- Load all plugin configs - order matters
@@ -159,7 +48,7 @@ end, {
 
 -- UI plugins that must initialize on startup
 require("plugins.explorer.oil")
-require("plugins.ui.alpha")  -- Keep alpha for now until NvChad integration is stable
+require("plugins.ui.alpha") -- Keep alpha for now until NvChad integration is stable
 
 -- helper for lazy loading modules on events
 local function lazy_require(event, module, opts)
@@ -197,8 +86,8 @@ local lazy_plugins = {
   "plugins.debug.neotest",
   "plugins.git.git",
   "plugins.ui.persistence",
-  "plugins.ui.lualine",       -- Restored until NvChad integration is stable
-  "plugins.ui.bufferline",    -- Restored until NvChad integration is stable
+  "plugins.ui.lualine",    -- Restored until NvChad integration is stable
+  "plugins.ui.bufferline", -- Restored until NvChad integration is stable
   "plugins.completion.copilot",
   "plugins.completion.luasnip",
   "plugins.ui.toggleterm",
