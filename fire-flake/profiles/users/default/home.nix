@@ -7,6 +7,7 @@
 }: {
   imports = [
     ../../../modules/home-manager/programs/git.nix
+    ../../../modules/home-manager/programs/lazygit.nix
     ../../../modules/home-manager/programs/kitty.nix
     ../../../modules/home-manager/programs/neovim.nix
     ../../../modules/home-manager/programs/obsidian.nix
@@ -48,6 +49,9 @@
     userName = userVars.git.name;
     userEmail = userVars.git.email;
   };
+
+  # Lazygit
+  custom.lazygit.enable = true;
 
   # Neovim
   custom.neovim = {

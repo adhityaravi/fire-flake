@@ -10,7 +10,6 @@
         ripgrep
         fd
         fzf
-        lazygit
         gh
         pay-respects
         fast-cli
