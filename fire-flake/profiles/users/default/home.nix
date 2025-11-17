@@ -8,6 +8,7 @@
   imports = [
     ../../../modules/home-manager/programs/git.nix
     ../../../modules/home-manager/programs/lazygit.nix
+    ../../../modules/home-manager/programs/just.nix
     ../../../modules/home-manager/programs/kitty.nix
     ../../../modules/home-manager/programs/neovim.nix
     ../../../modules/home-manager/programs/obsidian.nix
@@ -52,6 +53,14 @@
 
   # Lazygit
   custom.lazygit.enable = true;
+
+  # Just task runner
+  custom.just = {
+    enable = true;
+    # TODO: Move charm-dev to a more niche profile.
+    # NOTE: charm-dev requires sudo access and snaps.
+    recipes.charm-dev = true;
+  };
 
   # Neovim
   custom.neovim = {
