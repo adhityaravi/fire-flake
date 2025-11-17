@@ -10,5 +10,6 @@ require('conform').setup({
     yaml = { 'yamlfmt' },
     markdown = { 'prettier' },
     nix = { 'alejandra' },
+    ['*'] = { 'trim_whitespace' },
   },
 })
