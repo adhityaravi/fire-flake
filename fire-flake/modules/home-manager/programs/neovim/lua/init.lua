@@ -100,6 +100,7 @@ local lazy_plugins = {
   "plugins.search.todocomments",
   "plugins.formatting.conform",
   "plugins.ui.indentblankline",
+  "plugins.ui.smear-cursor",
   "plugins.git.octo",
   "plugins.ux.noice",
   "plugins.ux.autosave",
