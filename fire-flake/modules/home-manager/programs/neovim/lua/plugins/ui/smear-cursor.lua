@@ -78,7 +78,7 @@ vim.keymap.set("n", "<leader>kd", function()
 end, { desc = "Default preset" })
 
 -- Fire hazard isnt working yet, because the latest version isnt released to nixpkgs.
--- TODO: uncommet when the new version is available.
+-- TODO: uncomment when the new version is available.
 -- vim.keymap.set("n", "<leader>kf", function()
 --   switch_preset("fire_hazard")
 -- end, { desc = "Fire hazard preset" })
