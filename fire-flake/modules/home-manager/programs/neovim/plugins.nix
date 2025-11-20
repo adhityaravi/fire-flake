@@ -44,6 +44,7 @@ with pkgs.vimPlugins; [
   smart-splits-nvim
   # leap-nvim
   indent-blankline-nvim
+  smear-cursor-nvim
 
   # Syntax highlighting
   treesitter

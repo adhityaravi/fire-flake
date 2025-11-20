@@ -11,6 +11,7 @@ wk.add({
   { "<leader>g", group = "git", icon = "󰊢" },
   { "<leader>gh", group = "github", icon = "" },
   { "<leader>b", group = "buffers", icon = "󰈚" },
+  { "<leader>k", group = "cursor", icon = "█" },
   { "<leader>l", group = "lsp", icon = "󰒕" },
   { "<leader>f", group = "fuzzy-find", icon = "󰭎" },
   { "<leader>t", group = "toggles", icon = "" },
