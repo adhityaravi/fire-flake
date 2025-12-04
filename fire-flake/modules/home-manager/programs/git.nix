@@ -55,22 +55,22 @@ in
   config = lib.mkIf cfg.enable {
     programs.git = {
       enable = true;
-      userName = cfg.userName;
-      userEmail = cfg.userEmail;
 
       signing = lib.mkIf (cfg.signingKey != null) {
         key = cfg.signingKey;
         signByDefault = true;
       };
 
-      extraConfig = lib.mkMerge [
+      settings = lib.mkMerge [
+        {
+          user = {
+            name = cfg.userName;
+            email = cfg.userEmail;
+          };
+          alias = cfg.aliases;
+        }
         (lib.mkDefault cfg.extraConfig)
         cfg.extraConfig
-      ];
-
-      aliases = lib.mkMerge [
-        (lib.mkDefault cfg.aliases)
-        cfg.aliases
       ];
     };
   };

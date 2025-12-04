@@ -43,7 +43,7 @@ in
         nixd
         nodePackages.bash-language-server
         nodePackages.vscode-langservers-extracted
-        nodePackages.dockerfile-language-server-nodejs
+        dockerfile-language-server
         nodePackages.yaml-language-server
         lua-language-server
       ];
