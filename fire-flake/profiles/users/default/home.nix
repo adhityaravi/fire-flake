@@ -18,6 +18,7 @@
     ../../../modules/home-manager/programs/starship/starship.nix
     ../../../modules/home-manager/programs/k9s.nix
     ../../../modules/home-manager/programs/copilot-cli.nix
+    ../../../modules/home-manager/programs/semtools.nix
     ../../../modules/home-manager/common.nix
   ];
 
@@ -140,4 +141,7 @@
 
   # GitHub Copilot CLI
   custom.copilot-cli.enable = true;
+
+  # Semtools semantic search
+  custom.semtools.enable = true;
 }
