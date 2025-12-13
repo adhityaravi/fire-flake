@@ -12,7 +12,6 @@
         fzf
         gh
         pay-respects
-        fast-cli
       ];
       description = "Common CLI tools useful across programs.";
     };
@@ -37,6 +36,7 @@
         nixpkgs-fmt
         shellcheck
         tree
+        nodejs
       ];
       description = "Development tools shared across environments.";
     };

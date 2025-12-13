@@ -103,6 +103,27 @@
   # Claude Code CLI
   custom.claudeCode = {
     enable = true;
+    settings = {
+      alwaysThinkingEnabled = true;
+      statusLine = {
+        type = "command";
+        command = "npx -y @owloops/claude-powerline@latest --style=powerline";
+      };
+    };
+    marketplaces = {
+      claude-code-workflows = {
+        owner = "wshobson";
+        repo = "agents";
+        rev = "c7ad381360bb8a2263aa42e25f81dc41161bf7d9";
+        hash = "sha256-tF1ambblLu/BxCdNf1H2GqhhtkFAZ/kvNb+wlaTTdy4=";
+        plugins = [
+          "python-development"
+          "kubernetes-operations"
+          "security-scanning"
+          "code-review-ai"
+        ];
+      };
+    };
     #extraEnv = {
     #  CLAUDE_CODE_MODEL = "default";
     #};
