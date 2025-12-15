@@ -2,8 +2,8 @@
   <img src="https://github.com/user-attachments/assets/23ba47e9-0709-4445-8b2a-1665ac098d33" width="400">
 </h1><br>
 
-fire-flake is a  [Nix flake](https://nixos.wiki/wiki/Flakes) to setup an opinionated SDE system.
-> Currently in beta and focused on user-level configuration with future plans for full system-level NixOS management. There will be continuous breaking changes until maturity.
+fire-flake is a personal [Nix flake](https://nixos.wiki/wiki/Flakes) for setting up a PC/server.
+> Currently focused on user-level configuration with future plans for full system-level NixOS management.
 
 ---
 
@@ -30,35 +30,6 @@ It aims to:
 - Allow the setup to be easily versioned, shared and reproduced across different machines for multiple users
 - Be less manual, invasive and flaky (lol, the irony) compared to traditional dotfiles and shell scripts
 - Allow system level configuration (for NixOS based systems) under the same framework
-
----
-
-## Features
-
-- 📦 **Nix Flakes** powered: fully reproducible, atomic configuration
-- 🏠 **Home Manager** based user-level setup
-- 🔐 **Private configuration repo support**
-- 🔥 **DevShells** for consistent development tooling
-- 🪿 **Goose CLI** integration for on-machine AI automation
-
----
-
-## Folder Structure
-
-| Folder | Description |
-|:-------|:------------|
-| `dev-shell/` | Development shells (default dev tools, linters, bootstraps) |
-| `lib/` | Shared libraries (e.g., dynamic variable loader `loadVars.nix`) |
-| `modules/home-manager` | Home Manager modules (programs like Git, Neovim, etc.) |
-| `modules/nixos` | (Planned) NixOS system configuration modules |
-| `overlays/` | (Planned) Package overlays and custom package builds |
-| `profiles/hosts/` | Host-specific configs (e.g., `laptop/`, `server/`) |
-| `profiles/users/` | User-specific configs (e.g., `default/`) |
-| `secrets/` | (Planned) Encrypted secrets management |
-| `vars/` | Local user variables (e.g., Git name/email, homeDirectory) |
-| `install-nix.sh` | Bootstrap script to install Nix and Home Manager |
-
----
 
 ## Installation
 
@@ -123,9 +94,7 @@ home-manager --impure switch --flake .#default
 - Modern **Linux OS** (Ubuntu, Fedora, Arch, etc.)
 - **Nix** package manager (installed via `install-nix.sh`)
 - Basic **Git** setup
-- SSH keys added to GitHub if configuring via a private repo 
-
-**Note:** This requirement list the minimum. There could be app level requirements for specific programs (e.g., `git`, `neovim`, etc.) for accessing the full feature-set. This will be documented in the.
+- SSH keys added to GitHub if configuring via a private repo
 
 ---
 
