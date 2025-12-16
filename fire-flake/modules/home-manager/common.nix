@@ -48,6 +48,7 @@
         imagemagick
         exiftool
         mediainfo
+        peek
       ];
       description = "Media-related tools (e.g. ffmpeg, imagemagick).";
     };
