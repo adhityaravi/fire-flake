@@ -1,20 +1,25 @@
 # Justfile for setting up and nuking a charm development environment
+# Usage: just -g k8s=ck8s setup-charm-dev  (or k8s=microk8s, which is the default)
+
+# Default Kubernetes flavor: "microk8s" or "ck8s"
+k8s := "microk8s"
 
 default:
     just --summary
 
-# --------------------------------------------------------------------
-# CORE RECIPES
-# --------------------------------------------------------------------
+# ====================================================================
+# MICROK8S RECIPES
+# ====================================================================
 
-install-core-snaps:
+[private]
+microk8s-install:
     # Install Juju and MicroK8s
     sudo snap install juju --channel=3.6/stable
     sudo snap install microk8s --channel=1.32/stable --classic
-    # sudo snap install microk8s --channel=1.32-strict/stable
     sudo snap alias microk8s.kubectl kubectl
     sudo snap alias microk8s.kubectl k
 
+[private]
 microk8s-setup:
     # Configure MicroK8s and enable required addons
     sudo usermod -a -G microk8s $USER
@@ -32,7 +37,8 @@ microk8s-setup:
     sudo microk8s enable registry
     sudo microk8s kubectl rollout status deployment.apps/registry -n container-registry -w --timeout=600s
 
-juju-bootstrap:
+[private]
+microk8s-juju-bootstrap:
     # Bootstrap both LXD and MicroK8s controllers and create default models
     juju bootstrap localhost lxd
     juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
@@ -42,14 +48,83 @@ juju-bootstrap:
     juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
                    --config update-status-hook-interval="60m" welcome-k8s
 
-export-kubeconfig:
+[private]
+microk8s-export-kubeconfig:
     # Save kubeconfig to user's home
     mkdir -p $HOME/.kube
     microk8s config > $HOME/.kube/config
 
-# --------------------------------------------------------------------
+[private]
+microk8s-nuke:
+    # Destroy Juju controllers and remove Juju/MicroK8s
+    sudo snap remove --purge juju || true
+    sudo snap remove --purge microk8s || true
+    rm -rf ~/.local/share/juju ~/.cache/juju ~/.config/juju
+    sudo rm -rf /var/snap/juju /var/snap/microk8s
+    sudo rm -rf /run/containerd
+    rm -f ~/.kube/config
+
+# ====================================================================
+# CANONICAL K8S RECIPES
+# ====================================================================
+
+[private]
+ck8s-install:
+    # Install Juju and Canonical K8s
+    sudo snap install juju --channel=3.6/stable
+    sudo snap install k8s --classic --channel=1.32-classic/stable
+    sudo snap install kubectl --classic
+
+[private]
+ck8s-setup:
+    # Bootstrap Canonical K8s and enable required features
+    sudo k8s bootstrap
+    sudo k8s status --wait-ready
+    # Enable DNS (CoreDNS)
+    sudo k8s enable dns
+    sudo k8s kubectl rollout status deployment/coredns -n kube-system -w --timeout=600s
+    # Enable metrics-server
+    sudo k8s enable metrics-server
+    sudo k8s kubectl rollout status deployment/metrics-server -n kube-system -w --timeout=600s
+    # Enable local-storage
+    sudo k8s enable local-storage
+    # Enable load-balancer with L2 mode
+    sudo k8s enable load-balancer
+    IPADDR=$(ip -4 -j route get 2.2.2.2 | jq -r '.[] | .prefsrc'); sudo k8s set load-balancer.cidrs=$IPADDR/32 load-balancer.l2-mode=true
+    # Enable gateway API
+    sudo k8s enable gateway
+
+[private]
+ck8s-juju-bootstrap:
+    # Bootstrap both LXD and Canonical K8s controllers and create default models
+    juju bootstrap localhost lxd
+    juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
+                   --config update-status-hook-interval="60m" welcome-lxd
+    sudo k8s config | juju add-k8s ck8s --client
+    juju bootstrap ck8s ck8s
+    juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
+                   --config update-status-hook-interval="60m" welcome-k8s
+
+[private]
+ck8s-export-kubeconfig:
+    # Save kubeconfig to user's home
+    mkdir -p $HOME/.kube
+    sudo k8s config > $HOME/.kube/config
+
+[private]
+ck8s-nuke:
+    # Destroy Juju controllers and remove Juju/Canonical K8s
+    sudo snap remove --purge juju || true
+    sudo snap remove --purge k8s || true
+    sudo snap remove --purge kubectl || true
+    rm -rf ~/.local/share/juju ~/.cache/juju ~/.config/juju
+    sudo rm -rf /var/snap/juju /var/snap/k8s
+    sudo rm -rf /run/containerd
+    rm -f ~/.kube/config
+
+# ====================================================================
 # DEV TOOLING
-# --------------------------------------------------------------------
+# ====================================================================
 
 install-dev-snaps:
     # Tools to support Juju + charmcraft workflow
@@ -58,19 +133,6 @@ install-dev-snaps:
     sudo snap install jhack --channel=latest/stable
     sudo snap install --classic astral-uv
     sudo snap install yq
-
-# --------------------------------------------------------------------
-# NUKE RECIPES
-# --------------------------------------------------------------------
-
-nuke-core-snaps:
-    # Destroy Juju controllers and remove Juju/MicroK8s
-    sudo snap remove --purge juju || true
-    sudo snap remove --purge microk8s || true
-
-    rm -rf ~/.local/share/juju ~/.cache/juju ~/.config/juju
-    sudo rm -rf /var/snap/juju /var/snap/microk8s
-    rm -f ~/.kube/config
 
 nuke-dev-snaps:
     # Remove all development tooling
@@ -81,21 +143,52 @@ nuke-dev-snaps:
     sudo snap remove --purge yq || true
     sudo snap remove --purge just || true
 
-# --------------------------------------------------------------------
-# COMPOSITE RECIPES
-# --------------------------------------------------------------------
+# ====================================================================
+# COMPOSITE RECIPES (use k8s=microk8s or k8s=ck8s)
+# ====================================================================
 
+# Setup charm development environment
+# Usage: just -g setup-charm-dev              (defaults to microk8s)
+#        just -g k8s=ck8s setup-charm-dev     (for Canonical K8s)
 setup-charm-dev:
-    just -g install-core-snaps
-    just -g microk8s-setup
-    just -g juju-bootstrap
-    just -g export-kubeconfig
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{k8s}}" = "microk8s" ]; then
+        echo "Setting up MicroK8s charm development environment..."
+        just -g microk8s-install
+        just -g microk8s-setup
+        just -g microk8s-juju-bootstrap
+        just -g microk8s-export-kubeconfig
+    elif [ "{{k8s}}" = "ck8s" ]; then
+        echo "Setting up Canonical K8s charm development environment..."
+        just -g ck8s-install
+        just -g ck8s-setup
+        just -g ck8s-juju-bootstrap
+        just -g ck8s-export-kubeconfig
+    else
+        echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
+        exit 1
+    fi
+
+# Nuke charm development environment
+# Usage: just -g nuke-charm-dev              (defaults to microk8s)
+#        just -g k8s=ck8s nuke-charm-dev     (for Canonical K8s)
+nuke-charm-dev:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{k8s}}" = "microk8s" ]; then
+        echo "Nuking MicroK8s charm development environment..."
+        just -g microk8s-nuke
+    elif [ "{{k8s}}" = "ck8s" ]; then
+        echo "Nuking Canonical K8s charm development environment..."
+        just -g ck8s-nuke
+    else
+        echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
+        exit 1
+    fi
 
 setup-charm-dev-tools:
     just -g install-dev-snaps
-
-nuke-charm-dev:
-    just -g nuke-core-snaps
 
 nuke-charm-dev-tools:
     just -g nuke-dev-snaps
