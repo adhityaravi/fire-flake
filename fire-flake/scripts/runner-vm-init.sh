@@ -114,6 +114,14 @@ su - "$RUNNER_USER" << EOF
     nix run home-manager -- switch --impure --flake "path:.#$MACHINE"
 EOF
 
+# Set fish as default shell
+FISH_PATH="/home/$RUNNER_USER/.nix-profile/bin/fish"
+if [ -x "$FISH_PATH" ]; then
+    echo "Setting fish as default shell..."
+    echo "$FISH_PATH" >> /etc/shells
+    chsh -s "$FISH_PATH" "$RUNNER_USER"
+fi
+
 echo ""
 echo "=== VM initialization complete ==="
 echo ""
@@ -130,7 +138,8 @@ echo ""
 echo "  4. Start the runner service:"
 echo "       jg runner-service-install"
 echo ""
-echo "Other useful commands:"
+echo "Useful commands:"
 echo "  jg runner-service-status   # Check runner status"
 echo "  jg runner-logs             # View runner logs"
 echo "  jg runner-nuke             # Remove runner completely"
+echo "  jg ts up                   # Connect to Tailscale"
