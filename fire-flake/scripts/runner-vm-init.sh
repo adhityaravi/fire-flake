@@ -96,6 +96,10 @@ cat > "$FLAKE_DIR/fire-flake/vars/$RUNNER_USER.nix" << EOF
 EOF
 chown "$RUNNER_USER:$RUNNER_USER" "$FLAKE_DIR/fire-flake/vars/$RUNNER_USER.nix"
 
+# Disable private config repo (no SSH keys on fresh VM)
+echo "Disabling private fire-flake-config input..."
+sed -i '/# Optional: if disabled/,/};/d' "$FLAKE_DIR/fire-flake/flake.nix"
+
 # Install home-manager and switch to machine config
 echo "[7/7] Installing home-manager and applying $MACHINE config..."
 su - "$RUNNER_USER" << EOF
