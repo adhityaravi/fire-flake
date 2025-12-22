@@ -18,7 +18,7 @@ in {
         end
       '';
       shellAliases = {
-        jg = "just -qg";
+        jg = "just -g";
       };
     };
 
