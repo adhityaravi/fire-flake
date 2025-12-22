@@ -7,7 +7,8 @@ let
   globalJustfile = pkgs.writeText "justfile" (
     lib.concatStringsSep "\n\n" (
       lib.optionals cfg.recipes.charm-dev [(builtins.readFile ../../../justfiles/charm-dev.just)]
-      # Add more recipe files here as they're enabled
+      ++ lib.optionals cfg.recipes.tailscale [(builtins.readFile ../../../justfiles/tailscale.just)]
+      ++ lib.optionals cfg.recipes.runner [(builtins.readFile ../../../justfiles/runner.just)]
     )
   );
 in
@@ -17,9 +18,8 @@ in
 
     recipes = {
       charm-dev = lib.mkEnableOption "Include charm development recipes";
-      # Add more recipe options here as needed
-      # docker = lib.mkEnableOption "Include docker recipes";
-      # kubernetes = lib.mkEnableOption "Include kubernetes recipes";
+      tailscale = lib.mkEnableOption "Include tailscale service management recipes";
+      runner = lib.mkEnableOption "Include GitHub Actions runner recipes";
     };
   };
 
@@ -30,8 +30,7 @@ in
 
     # Install global justfile to ~/.config/just/justfile
     xdg.configFile."just/justfile" = lib.mkIf (
-      cfg.recipes.charm-dev
-      # Add more conditions here: || cfg.recipes.docker || cfg.recipes.kubernetes
+      cfg.recipes.charm-dev || cfg.recipes.tailscale || cfg.recipes.runner
     ) {
       source = globalJustfile;
     };

@@ -3,7 +3,6 @@
 </h1><br>
 
 fire-flake is a personal [Nix flake](https://nixos.wiki/wiki/Flakes) for setting up a PC/server.
-> Currently focused on user-level configuration with future plans for full system-level NixOS management.
 
 ---
 

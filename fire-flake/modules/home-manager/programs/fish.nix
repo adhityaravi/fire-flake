@@ -17,6 +17,9 @@ in {
           fortune -a | cowsay
         end
       '';
+      shellAliases = {
+        jg = "just -qg";
+      };
     };
 
     home.packages = with pkgs; [ fish fortune cowsay ];

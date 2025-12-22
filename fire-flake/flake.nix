@@ -16,7 +16,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Optional: if disabled, an attempt will be made to load local configuration file from the vars directory. 
+    # Optional: if disabled, an attempt will be made to load local configuration file from the vars directory.
     # Note: Only ssh auth is tested.
     fire-flake-config = {
       url = "git+ssh://git@github.com/adhityaravi/fire-flake-config-ivdi.git";
@@ -24,7 +24,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: 
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
 
   let
     system = "x86_64-linux";
@@ -58,18 +58,31 @@
     };
 
     homeConfigurations = {
-      # Default home-manager configuration
-      default = home-manager.lib.homeManagerConfiguration {
+      # kawaiikuma (Ubuntu)
+      kawaiikuma = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
         modules = [
-          ./profiles/users/default/home.nix
+          ./machines/kawaiikuma/home.nix
         ];
 
         extraSpecialArgs = {
           inherit userVars nurpkgs;
         };
-      };  
+      };
+
+      # oishiioushi (Ubuntu)
+      oishiioushi = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+
+        modules = [
+          ./machines/oishiioushi/home.nix
+        ];
+
+        extraSpecialArgs = {
+          inherit userVars nurpkgs;
+        };
+      };
     };
   };
 }

@@ -1,18 +1,15 @@
 # Justfile for setting up and nuking a charm development environment
-# Usage: just -g k8s=ck8s setup-charm-dev  (or k8s=microk8s, which is the default)
+# Usage: just -g k8s=ck8s charmdev-setup  (or k8s=microk8s, which is the default)
 
 # Default Kubernetes flavor: "microk8s" or "ck8s"
 k8s := "microk8s"
-
-default:
-    just --summary
 
 # ====================================================================
 # MICROK8S RECIPES
 # ====================================================================
 
 [private]
-microk8s-install:
+charmdev-microk8s-install:
     # Install Juju and MicroK8s
     sudo snap install juju --channel=3.6/stable
     sudo snap install microk8s --channel=1.32/stable --classic
@@ -20,7 +17,7 @@ microk8s-install:
     sudo snap alias microk8s.kubectl k
 
 [private]
-microk8s-setup:
+charmdev-microk8s-setup:
     # Configure MicroK8s and enable required addons
     sudo usermod -a -G microk8s $USER
     sudo usermod -a -G snap_microk8s $USER
@@ -38,7 +35,7 @@ microk8s-setup:
     sudo microk8s kubectl rollout status deployment.apps/registry -n container-registry -w --timeout=600s
 
 [private]
-microk8s-juju-bootstrap:
+charmdev-microk8s-juju-bootstrap:
     # Bootstrap both LXD and MicroK8s controllers and create default models
     juju bootstrap localhost lxd
     juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
@@ -49,13 +46,13 @@ microk8s-juju-bootstrap:
                    --config update-status-hook-interval="60m" welcome-k8s
 
 [private]
-microk8s-export-kubeconfig:
+charmdev-microk8s-export-kubeconfig:
     # Save kubeconfig to user's home
     mkdir -p $HOME/.kube
     microk8s config > $HOME/.kube/config
 
 [private]
-microk8s-nuke:
+charmdev-microk8s-nuke:
     # Destroy Juju controllers and remove Juju/MicroK8s
     sudo snap remove --purge juju || true
     sudo snap remove --purge microk8s || true
@@ -69,14 +66,14 @@ microk8s-nuke:
 # ====================================================================
 
 [private]
-ck8s-install:
+charmdev-ck8s-install:
     # Install Juju and Canonical K8s
     sudo snap install juju --channel=3.6/stable
     sudo snap install k8s --classic --channel=1.32-classic/stable
     sudo snap install kubectl --classic
 
 [private]
-ck8s-setup:
+charmdev-ck8s-setup:
     # Bootstrap Canonical K8s and enable required features
     sudo k8s bootstrap
     sudo k8s status --wait-ready
@@ -95,7 +92,7 @@ ck8s-setup:
     sudo k8s enable gateway
 
 [private]
-ck8s-juju-bootstrap:
+charmdev-ck8s-juju-bootstrap:
     # Bootstrap both LXD and Canonical K8s controllers and create default models
     juju bootstrap localhost lxd
     juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
@@ -106,13 +103,13 @@ ck8s-juju-bootstrap:
                    --config update-status-hook-interval="60m" welcome-k8s
 
 [private]
-ck8s-export-kubeconfig:
+charmdev-ck8s-export-kubeconfig:
     # Save kubeconfig to user's home
     mkdir -p $HOME/.kube
     sudo k8s config > $HOME/.kube/config
 
 [private]
-ck8s-nuke:
+charmdev-ck8s-nuke:
     # Destroy Juju controllers and remove Juju/Canonical K8s
     sudo snap remove --purge juju || true
     sudo snap remove --purge k8s || true
@@ -126,7 +123,7 @@ ck8s-nuke:
 # DEV TOOLING
 # ====================================================================
 
-install-dev-snaps:
+charmdev-tools-setup:
     # Tools to support Juju + charmcraft workflow
     sudo snap install --classic charmcraft
     sudo snap install --classic rockcraft
@@ -134,7 +131,7 @@ install-dev-snaps:
     sudo snap install --classic astral-uv
     sudo snap install yq
 
-nuke-dev-snaps:
+charmdev-tools-nuke:
     # Remove all development tooling
     sudo snap remove --purge charmcraft || true
     sudo snap remove --purge rockcraft || true
@@ -148,47 +145,41 @@ nuke-dev-snaps:
 # ====================================================================
 
 # Setup charm development environment
-# Usage: just -g setup-charm-dev              (defaults to microk8s)
-#        just -g k8s=ck8s setup-charm-dev     (for Canonical K8s)
-setup-charm-dev:
+# Usage: just -g charmdev-setup              (defaults to microk8s)
+#        just -g k8s=ck8s charmdev-setup     (for Canonical K8s)
+charmdev-setup:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
         echo "Setting up MicroK8s charm development environment..."
-        just -g microk8s-install
-        just -g microk8s-setup
-        just -g microk8s-juju-bootstrap
-        just -g microk8s-export-kubeconfig
+        just -g charmdev-microk8s-install
+        just -g charmdev-microk8s-setup
+        just -g charmdev-microk8s-juju-bootstrap
+        just -g charmdev-microk8s-export-kubeconfig
     elif [ "{{k8s}}" = "ck8s" ]; then
         echo "Setting up Canonical K8s charm development environment..."
-        just -g ck8s-install
-        just -g ck8s-setup
-        just -g ck8s-juju-bootstrap
-        just -g ck8s-export-kubeconfig
+        just -g charmdev-ck8s-install
+        just -g charmdev-ck8s-setup
+        just -g charmdev-ck8s-juju-bootstrap
+        just -g charmdev-ck8s-export-kubeconfig
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
     fi
 
 # Nuke charm development environment
-# Usage: just -g nuke-charm-dev              (defaults to microk8s)
-#        just -g k8s=ck8s nuke-charm-dev     (for Canonical K8s)
-nuke-charm-dev:
+# Usage: just -g charmdev-nuke              (defaults to microk8s)
+#        just -g k8s=ck8s charmdev-nuke     (for Canonical K8s)
+charmdev-nuke:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
         echo "Nuking MicroK8s charm development environment..."
-        just -g microk8s-nuke
+        just -g charmdev-microk8s-nuke
     elif [ "{{k8s}}" = "ck8s" ]; then
         echo "Nuking Canonical K8s charm development environment..."
-        just -g ck8s-nuke
+        just -g charmdev-ck8s-nuke
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
     fi
-
-setup-charm-dev-tools:
-    just -g install-dev-snaps
-
-nuke-charm-dev-tools:
-    just -g nuke-dev-snaps

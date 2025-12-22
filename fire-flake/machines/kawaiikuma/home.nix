@@ -6,20 +6,21 @@
   ...
 }: {
   imports = [
-    ../../../modules/home-manager/programs/git.nix
-    ../../../modules/home-manager/programs/lazygit.nix
-    ../../../modules/home-manager/programs/just.nix
-    ../../../modules/home-manager/programs/kitty.nix
-    ../../../modules/home-manager/programs/neovim.nix
-    ../../../modules/home-manager/programs/obsidian.nix
-    ../../../modules/home-manager/programs/goose.nix
-    ../../../modules/home-manager/programs/claude-code.nix
-    ../../../modules/home-manager/programs/fish.nix
-    ../../../modules/home-manager/programs/starship/starship.nix
-    ../../../modules/home-manager/programs/k9s.nix
-    ../../../modules/home-manager/programs/copilot-cli.nix
-    ../../../modules/home-manager/programs/semtools.nix
-    ../../../modules/home-manager/common.nix
+    ../../modules/home-manager/programs/git.nix
+    ../../modules/home-manager/programs/lazygit.nix
+    ../../modules/home-manager/programs/just.nix
+    ../../modules/home-manager/programs/kitty.nix
+    ../../modules/home-manager/programs/neovim.nix
+    ../../modules/home-manager/programs/obsidian.nix
+    ../../modules/home-manager/programs/goose.nix
+    ../../modules/home-manager/programs/claude-code.nix
+    ../../modules/home-manager/programs/fish.nix
+    ../../modules/home-manager/programs/starship/starship.nix
+    ../../modules/home-manager/programs/k9s.nix
+    ../../modules/home-manager/programs/copilot-cli.nix
+    ../../modules/home-manager/programs/semtools.nix
+    ../../modules/home-manager/programs/tailscale.nix
+    ../../modules/home-manager/common.nix
   ];
 
   home = {
@@ -61,6 +62,7 @@
     # TODO: Move charm-dev to a more niche profile.
     # NOTE: charm-dev requires sudo access and snaps.
     recipes.charm-dev = true;
+    recipes.tailscale = true;
   };
 
   # Neovim
@@ -144,4 +146,7 @@
 
   # Semtools semantic search
   custom.semtools.enable = true;
+
+  # Tailscale
+  custom.tailscale.enable = true;
 }
