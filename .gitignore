@@ -14,25 +14,25 @@ Thumbs.db
 *.code-workspace
 
 # --- Nix-specific ---
-fire-flakes/result
-fire-flakes/result-*
-fire-flakes/nix-shell-result
-fire-flakes/nix
-fire-flakes/*.drv
-fire-flakes/*.out
-fire-flakes/*.gcno
-fire-flakes/*.gcda
+fire-flake/result
+fire-flake/result-*
+fire-flake/nix-shell-result
+fire-flake/nix
+fire-flake/*.drv
+fire-flake/*.out
+fire-flake/*.gcno
+fire-flake/*.gcda
 
 # --- System files ---
 .nfs*
 
-# --- fire-flakes-specific ---
-fire-flakes/vars/*
-!fire-flakes/vars/template.nix
-!fire-flakes/vars/.gitignore
+# --- fire-flake-specific ---
+fire-flake/vars/*
+!fire-flake/vars/template.nix
+!fire-flake/vars/.gitignore
 
 # --- Env-specific ---
-fire-flakes/.env
-fire-flakes/.envrc
-fire-flakes/.direnv/
-fire-flakes/.cache/
+fire-flake/.env
+fire-flake/.envrc
+fire-flake/.direnv/
+fire-flake/.cache/
