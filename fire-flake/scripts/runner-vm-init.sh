@@ -106,7 +106,7 @@ echo "[7/7] Installing home-manager and applying $MACHINE config..."
 su - "$RUNNER_USER" << EOF
     . /etc/profile.d/nix.sh 2>/dev/null || . ~/.nix-profile/etc/profile.d/nix.sh 2>/dev/null || true
     cd $FLAKE_DIR/fire-flake
-    nix run home-manager -- switch --flake .#$MACHINE
+    nix run home-manager -- switch --impure --flake .#$MACHINE
 EOF
 
 echo ""
