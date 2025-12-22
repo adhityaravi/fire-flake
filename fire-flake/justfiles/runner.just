@@ -9,8 +9,9 @@ runner_dir := env_var_or_default("RUNNER_DIR", "~/actions-runner")
 # ====================================================================
 
 # Configure GH Actions runner (github-runner installed via Nix)
-# Usage: jg runner-setup https://github.com/org/repo AXXXX...
-runner-setup repo token:
+# Usage: jg runner-setup REPO TOKEN LABELS
+# Example: jg runner-setup https://github.com/org/repo AXXXX... self-hosted,Linux,X64,charm-ci
+runner-setup repo token labels:
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -24,8 +25,8 @@ runner-setup repo token:
     export RUNNER_ROOT="$RUNNER_DIR"
     cd "$RUNNER_DIR"
 
-    # Configure runner
-    config.sh --url "{{repo}}" --token "{{token}}" --unattended --replace --disableupdate --work "$RUNNER_DIR/_work"
+    # Configure runner (--no-default-labels removes self-hosted,Linux,X64)
+    config.sh --url "{{repo}}" --token "{{token}}" --labels "{{labels}}" --no-default-labels --unattended --replace --disableupdate --work "$RUNNER_DIR/_work"
 
     echo ""
     echo "Done! Run 'jg runner-run' to start interactively or 'jg runner-service-install' for systemd"
