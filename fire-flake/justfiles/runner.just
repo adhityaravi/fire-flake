@@ -19,10 +19,13 @@ runner-setup repo token:
 
     echo "Configuring GitHub Actions runner in $RUNNER_DIR..."
     mkdir -p "$RUNNER_DIR"
+
+    # RUNNER_ROOT is required for nixpkgs github-runner (nix store is read-only)
+    export RUNNER_ROOT="$RUNNER_DIR"
     cd "$RUNNER_DIR"
 
-    # Configure runner using Nix-installed binary
-    config.sh --url "{{repo}}" --token "{{token}}" --unattended --replace --work "$RUNNER_DIR/_work"
+    # Configure runner
+    config.sh --url "{{repo}}" --token "{{token}}" --unattended --replace --disableupdate --work "$RUNNER_DIR/_work"
 
     echo ""
     echo "Done! Run 'jg runner-run' to start interactively or 'jg runner-service-install' for systemd"
@@ -33,8 +36,9 @@ runner-run:
     set -euo pipefail
     RUNNER_DIR="{{runner_dir}}"
     RUNNER_DIR="${RUNNER_DIR/#\~/$HOME}"
+    export RUNNER_ROOT="$RUNNER_DIR"
     cd "$RUNNER_DIR"
-    Runner.Listener
+    run.sh
 
 # ====================================================================
 # SYSTEMD SERVICE
@@ -51,15 +55,16 @@ runner-service-install:
     SERVICE_FILE="$HOME/.config/systemd/user/github-runner.service"
     mkdir -p "$(dirname "$SERVICE_FILE")"
 
-    cat > "$SERVICE_FILE" << 'SERVICEEOF'
+    cat > "$SERVICE_FILE" << SERVICEEOF
     [Unit]
     Description=GitHub Actions Runner
     After=network.target
 
     [Service]
     Type=simple
-    WorkingDirectory=RUNNER_DIR_PLACEHOLDER
-    ExecStart=RUNNER_LISTENER_PLACEHOLDER
+    WorkingDirectory=$RUNNER_DIR
+    Environment=RUNNER_ROOT=$RUNNER_DIR
+    ExecStart=$(which run.sh)
     Restart=always
     RestartSec=10
 
@@ -67,9 +72,7 @@ runner-service-install:
     WantedBy=default.target
     SERVICEEOF
 
-    # Fix placeholders and remove leading whitespace
-    sed -i "s|RUNNER_DIR_PLACEHOLDER|$RUNNER_DIR|g" "$SERVICE_FILE"
-    sed -i "s|RUNNER_LISTENER_PLACEHOLDER|$(which Runner.Listener)|g" "$SERVICE_FILE"
+    # Remove leading whitespace from heredoc
     sed -i 's/^    //' "$SERVICE_FILE"
 
     systemctl --user daemon-reload
@@ -77,7 +80,7 @@ runner-service-install:
     systemctl --user start github-runner
 
     echo "Runner service installed and started"
-    systemctl --user status github-runner --no-pager
+    systemctl --user status github-runner --no-pager || true
 
 # Start runner service
 runner-service-start:
@@ -107,8 +110,9 @@ runner-logs:
 # CLEANUP
 # ====================================================================
 
-# Remove runner configuration
-runner-nuke:
+# Remove runner configuration completely
+# Usage: jg runner-nuke <TOKEN>  (token needed to deregister from GitHub)
+runner-nuke token="":
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -116,15 +120,26 @@ runner-nuke:
     RUNNER_DIR="${RUNNER_DIR/#\~/$HOME}"
 
     # Stop service if running
+    echo "Stopping runner service..."
     systemctl --user stop github-runner 2>/dev/null || true
     systemctl --user disable github-runner 2>/dev/null || true
     rm -f ~/.config/systemd/user/github-runner.service
     systemctl --user daemon-reload
 
+    # Deregister from GitHub if token provided and config exists
+    if [ -n "{{token}}" ] && [ -f "$RUNNER_DIR/.runner" ]; then
+        echo "Deregistering runner from GitHub..."
+        export RUNNER_ROOT="$RUNNER_DIR"
+        cd "$RUNNER_DIR"
+        config.sh remove --token "{{token}}" || true
+    fi
+
     # Remove runner directory
     if [ -d "$RUNNER_DIR" ]; then
         rm -rf "$RUNNER_DIR"
-        echo "Runner configuration removed"
+        echo "Runner directory removed"
     else
         echo "Runner directory not found"
     fi
+
+    echo "Runner nuked successfully"
