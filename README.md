@@ -32,14 +32,16 @@ It aims to:
 
 ## Installation
 
-### 1. Clone this repository
+### Option 1: Personal Machine Setup
+
+#### 1. Clone this repository
 
 ```bash
 git clone https://github.com/adhityaravi/fire-flake.git
 cd fire-flake
 ```
 
-### 2. Run the installer
+#### 2. Run the installer
 
 ```bash
 ./install-nix.sh
@@ -51,39 +53,66 @@ This will:
 - Enable **Flakes** and **experimental features**
 - Install **Home Manager** at the user profile level
 
+### Option 2: Fresh VM / GitHub Runner Setup
+
+For bootstrapping a fresh VM (e.g., Hetzner) as a GitHub Actions self-hosted runner:
+
+```bash
+curl -sL https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/scripts/runner-vm-init.sh | sudo bash
+```
+
+Or with custom parameters:
+
+```bash
+curl -sL https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/scripts/runner-vm-init.sh | sudo bash -s -- <username> <machine> <git-name> <git-email>
+```
+
+Parameters (all optional, with defaults):
+- `username`: Linux user to create (default: `ivdi`)
+- `machine`: Home-manager configuration to apply (default: `oishiioushi`)
+- `git-name`: Git user name (default: username)
+- `git-email`: Git email (default: `<username>@users.noreply.github.com`)
+
+After initialization, follow the on-screen instructions to configure the GitHub runner
+
 ---
 
 ## Usage
 
-> ℹ️ **Info**
->
-> Currently flake can be used only after cloning the repository locally. `nix` or `home-manager` commands cant be used because of a design flaw. I plan to fix it. 
-
-
-After installation:
+After installation, apply a machine configuration:
 
 ```bash
-home-manager --impure switch --flake .#default
+cd fire-flake/fire-flake
+home-manager switch --impure --flake .#<machine>
 ```
 
-This will:
+Available machines:
+- `kawaiikuma` - Full development environment (neovim, lazygit, starship, claude-code, etc.)
+- `oishiioushi` - Minimal CI/runner environment (git, fish, GitHub runner)
 
-- Set up user programs
-- Configure dotfiles
-- Apply system-wide user preferences
+Example:
+```bash
+home-manager switch --impure --flake .#kawaiikuma
+```
 
-**Note:** The `--impure` flag is required because the configuration uses the `$USER` environment variable to dynamically locate your specific vars file. See the [Home Manager documentation for --impure](https://nix-community.github.io/home-manager/index.html#sec-flakes-impure) for more details.
+**Note:** The `--impure` flag is required because the configuration uses the `$USER` environment variable to dynamically locate your vars file.
 
-Users are expected to provide their user-specific information (such as `username`, `email`, etc.) inside the `vars/` folder. This can be done by:
+### User Configuration
 
-- Copying `vars/template.nix` to `vars/<your-linux-username>.nix` and editing it with your details.
-- Alternatively, by using a private configuration repository like [fire-flake-config](https://github.com/adhityaravi/fire-flake-config) which contains a predefined structure.
+Users must provide their user-specific information in the `vars/` folder:
 
-To update configuration if you change your private repo:
+1. Copy `vars/template.nix` to `vars/<your-linux-username>.nix`
+2. Edit with your details (username, email, etc.)
+
+Alternatively, use a private configuration repository like [fire-flake-config](https://github.com/adhityaravi/fire-flake-config).
+
+### Updating
+
+To update dependencies and re-apply:
 
 ```bash
-nix flake update fire-flake-config
-home-manager --impure switch --flake .#default
+nix flake update
+home-manager switch --impure --flake .#<machine>
 ```
 
 ---

@@ -51,21 +51,26 @@ runner-service-install:
     SERVICE_FILE="$HOME/.config/systemd/user/github-runner.service"
     mkdir -p "$(dirname "$SERVICE_FILE")"
 
-    cat > "$SERVICE_FILE" << EOF
-[Unit]
-Description=GitHub Actions Runner
-After=network.target
+    cat > "$SERVICE_FILE" << 'SERVICEEOF'
+    [Unit]
+    Description=GitHub Actions Runner
+    After=network.target
 
-[Service]
-Type=simple
-WorkingDirectory=$RUNNER_DIR
-ExecStart=$(which Runner.Listener)
-Restart=always
-RestartSec=10
+    [Service]
+    Type=simple
+    WorkingDirectory=RUNNER_DIR_PLACEHOLDER
+    ExecStart=RUNNER_LISTENER_PLACEHOLDER
+    Restart=always
+    RestartSec=10
 
-[Install]
-WantedBy=default.target
-EOF
+    [Install]
+    WantedBy=default.target
+    SERVICEEOF
+
+    # Fix placeholders and remove leading whitespace
+    sed -i "s|RUNNER_DIR_PLACEHOLDER|$RUNNER_DIR|g" "$SERVICE_FILE"
+    sed -i "s|RUNNER_LISTENER_PLACEHOLDER|$(which Runner.Listener)|g" "$SERVICE_FILE"
+    sed -i 's/^    //' "$SERVICE_FILE"
 
     systemctl --user daemon-reload
     systemctl --user enable github-runner
