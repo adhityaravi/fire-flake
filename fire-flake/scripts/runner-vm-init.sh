@@ -105,8 +105,10 @@ rm -f "$FLAKE_DIR/fire-flake/flake.lock"
 echo "[7/7] Installing home-manager and applying $MACHINE config..."
 su - "$RUNNER_USER" << EOF
     . /etc/profile.d/nix.sh 2>/dev/null || . ~/.nix-profile/etc/profile.d/nix.sh 2>/dev/null || true
+    export USER=$RUNNER_USER
     cd $FLAKE_DIR/fire-flake
-    nix run home-manager -- switch --impure --flake .#$MACHINE
+    # Use path: to bypass git and include untracked files
+    nix run home-manager -- switch --impure --flake "path:.#$MACHINE"
 EOF
 
 echo ""
