@@ -65,7 +65,7 @@ mkdir -p "$RUNNER_NIX_CONF"
 if ! grep -q "experimental-features" "$RUNNER_NIX_CONF/nix.conf" 2>/dev/null; then
     echo "experimental-features = nix-command flakes" >> "$RUNNER_NIX_CONF/nix.conf"
 fi
-chown -R "$RUNNER_USER:$RUNNER_USER" "$RUNNER_NIX_CONF"
+chown -R "$RUNNER_USER:$RUNNER_USER" "/home/$RUNNER_USER/.config"
 
 # Clone flake repo for runner user
 RUNNER_HOME="/home/$RUNNER_USER"
@@ -100,6 +100,9 @@ chown "$RUNNER_USER:$RUNNER_USER" "$FLAKE_DIR/fire-flake/vars/$RUNNER_USER.nix"
 echo "Disabling private fire-flake-config input..."
 sed -i '/# Optional: if disabled/,/};/d' "$FLAKE_DIR/fire-flake/flake.nix"
 rm -f "$FLAKE_DIR/fire-flake/flake.lock"
+
+# Ensure user owns their home directory (fix any root-owned files)
+chown -R "$RUNNER_USER:$RUNNER_USER" "/home/$RUNNER_USER"
 
 # Install home-manager and switch to machine config
 echo "[7/7] Installing home-manager and applying $MACHINE config..."
