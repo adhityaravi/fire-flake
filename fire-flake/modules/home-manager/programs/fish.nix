@@ -11,6 +11,10 @@ in {
   config = lib.mkIf cfg.enable {
     programs.fish = {
       enable = true;
+      loginShellInit = ''
+        # Add nix paths for login shells (needed when fish is default shell)
+        fish_add_path --prepend ~/.nix-profile/bin /nix/var/nix/profiles/default/bin
+      '';
       interactiveShellInit = ''
         set -g fish_greeting ""
         if type -q fortune && type -q cowsay && type -q lolcat

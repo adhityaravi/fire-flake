@@ -106,7 +106,7 @@ chown -R "$RUNNER_USER:$RUNNER_USER" "/home/$RUNNER_USER"
 
 # Install home-manager and switch to machine config
 echo "[7/7] Installing home-manager and applying $MACHINE config..."
-su - "$RUNNER_USER" << EOF
+su - "$RUNNER_USER" -s /bin/bash << EOF
     . /etc/profile.d/nix.sh 2>/dev/null || . ~/.nix-profile/etc/profile.d/nix.sh 2>/dev/null || true
     export USER=$RUNNER_USER
     cd $FLAKE_DIR/fire-flake
@@ -114,11 +114,11 @@ su - "$RUNNER_USER" << EOF
     nix run home-manager -- switch --impure --flake "path:.#$MACHINE"
 EOF
 
-# Set fish as default shell
+# Set fish as default shell (after home-manager installs it)
 FISH_PATH="/home/$RUNNER_USER/.nix-profile/bin/fish"
 if [ -x "$FISH_PATH" ]; then
     echo "Setting fish as default shell..."
-    echo "$FISH_PATH" >> /etc/shells
+    grep -qxF "$FISH_PATH" /etc/shells || echo "$FISH_PATH" >> /etc/shells
     chsh -s "$FISH_PATH" "$RUNNER_USER"
 fi
 
