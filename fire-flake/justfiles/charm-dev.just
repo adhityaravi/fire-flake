@@ -20,8 +20,7 @@ charmdev-microk8s-install:
 charmdev-microk8s-setup:
     # Configure MicroK8s and enable required addons
     sudo usermod -a -G microk8s $USER
-    sudo usermod -a -G snap_microk8s $USER
-    microk8s status --wait-ready
+    sudo microk8s status --wait-ready
     sudo microk8s enable metrics-server
     sudo microk8s kubectl rollout status deployments/metrics-server -n kube-system -w --timeout=600s
     sudo microk8s enable dns
@@ -36,11 +35,8 @@ charmdev-microk8s-setup:
 
 [private]
 charmdev-microk8s-juju-bootstrap:
-    # Bootstrap both LXD and MicroK8s controllers and create default models
-    juju bootstrap localhost lxd
-    juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
-                   --config update-status-hook-interval="60m" welcome-lxd
-    microk8s config | juju add-k8s mcrk8s --client
+    # Bootstrap MicroK8s controller and create default model
+    sudo microk8s config | juju add-k8s mcrk8s --client
     juju bootstrap mcrk8s mcrk8s
     juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
                    --config update-status-hook-interval="60m" welcome-k8s
@@ -49,7 +45,7 @@ charmdev-microk8s-juju-bootstrap:
 charmdev-microk8s-export-kubeconfig:
     # Save kubeconfig to user's home
     mkdir -p $HOME/.kube
-    microk8s config > $HOME/.kube/config
+    sudo microk8s config > $HOME/.kube/config
 
 [private]
 charmdev-microk8s-nuke:
@@ -130,6 +126,7 @@ charmdev-tools-setup:
     sudo snap install jhack --channel=latest/stable
     sudo snap install --classic astral-uv
     sudo snap install yq
+    sudo snap install jq
 
 charmdev-tools-nuke:
     # Remove all development tooling
@@ -138,6 +135,7 @@ charmdev-tools-nuke:
     sudo snap remove --purge jhack || true
     sudo snap remove --purge astral-uv || true
     sudo snap remove --purge yq || true
+    sudo snap remove --purge jq || true
     sudo snap remove --purge just || true
 
 # ====================================================================
