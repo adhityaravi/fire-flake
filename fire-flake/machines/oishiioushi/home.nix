@@ -12,6 +12,7 @@
     ../../modules/home-manager/programs/gh-runner.nix
     ../../modules/home-manager/programs/tailscale.nix
     ../../modules/home-manager/common.nix
+    ../../modules/home-manager/programs/k9s.nix
   ];
 
   home = {
@@ -46,6 +47,9 @@
   # GitHub Actions runner
   custom.ghRunner.enable = true;
 
-  # Tailscale VPN
+  # Tailscale
   custom.tailscale.enable = true;
+
+  # k9s TUI
+  custom.k9s.enable = true;
 }
