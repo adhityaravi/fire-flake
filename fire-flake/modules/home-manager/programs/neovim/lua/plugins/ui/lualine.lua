@@ -79,7 +79,7 @@ require("lualine").setup({
     },
 
     sections = {
-      lualine_a = { "hostname", "mode" },
+      lualine_a = { "mode" },
 
       lualine_b = {
         "branch",
@@ -116,15 +116,17 @@ require("lualine").setup({
 
       lualine_z = {
         function()
-          local mode = vim.fn.mode()
-          if mode == "n" then
-            return "≽^•⩊•^≼"
-          elseif mode == "i" then
-            return "ฅ^•ﻌ•^ฅ"
+          local hostname = vim.fn.hostname()
+          if hostname == "kawaiikuma" then
+            return "ʕ ᵔᴥᵔ ʔ " .. hostname
+          elseif hostname == "nikoneko" then
+            return "≽^•⩊•^≼ " .. hostname
+          elseif hostname == "ikiikiinu" then
+            return "∪^ェ^∪ " .. hostname
           else
-            return "(=ↀωↀ=)"
+            return "[°□°] " .. hostname
           end
-        end
+        end,
       },
     },
 
