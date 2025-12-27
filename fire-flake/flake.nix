@@ -58,7 +58,7 @@
     };
 
     homeConfigurations = {
-      # kawaiikuma (Ubuntu)
+      # kawaiikuma FW13 Ubuntu (--> NixOS)
       kawaiikuma = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
@@ -71,18 +71,20 @@
         };
       };
 
-      # oishiioushi (Ubuntu)
-      oishiioushi = home-manager.lib.homeManagerConfiguration {
+      # nikoneko  FW16 Ubuntu
+      nikoneko = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
         modules = [
-          ./machines/oishiioushi/home.nix
+          ./machines/nikoneko/home.nix
         ];
 
         extraSpecialArgs = {
           inherit userVars nurpkgs;
         };
       };
+
+      # ikiikiinu JonsboN5 Ubuntu Server TBD
     };
   };
 }

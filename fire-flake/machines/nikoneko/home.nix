@@ -6,11 +6,11 @@
   ...
 }: {
   imports = [
+    # CLI tools and dev environment
     ../../modules/home-manager/programs/git.nix
     ../../modules/home-manager/programs/lazygit.nix
     ../../modules/home-manager/programs/just.nix
     ../../modules/home-manager/programs/neovim.nix
-    ../../modules/home-manager/programs/obsidian.nix
     ../../modules/home-manager/programs/goose.nix
     ../../modules/home-manager/programs/claude-code.nix
     ../../modules/home-manager/programs/fish.nix
@@ -20,6 +20,7 @@
     ../../modules/home-manager/programs/semtools.nix
     ../../modules/home-manager/programs/tailscale.nix
     ../../modules/home-manager/common.nix
+    # NOTE: No GUI apps (kitty, obsidian) - this is a headless SSH workstation
   ];
 
   home = {
@@ -28,22 +29,8 @@
     stateVersion = userVars.stateVersion;
   };
 
-  # Add your own tool selections if needed
-  # Its also possible to override the default common tools. Not recommended.
-  custom.common = {
-    enable = true;
-    # Example: add extra tools
-    #userTools = with pkgs; [
-    #  git
-    #  jq
-    #  curl
-    #  wget
-    #  direnv
-    #  nixpkgs-fmt
-    #  shellcheck
-    #  tree
-    #];
-  };
+  # Common CLI tools, fonts, dev tools
+  custom.common.enable = true;
 
   # Git
   custom.git = {
@@ -55,52 +42,19 @@
   # Lazygit
   custom.lazygit.enable = true;
 
-  # Just task runner
+  # Just task runner with charm-dev recipes
   custom.just = {
     enable = true;
-    # TODO: Move charm-dev to a more niche profile.
-    # NOTE: charm-dev requires sudo access and snaps.
+    # charm-dev for juju/microk8s/charmcraft development
     recipes.charm-dev = true;
     recipes.tailscale = true;
   };
 
   # Neovim
-  custom.neovim = {
-    enable = true;
+  custom.neovim.enable = true;
 
-    # obsidianVaultPaths = userVars.obsidian.vaultPaths;
-
-    # Example: Add extra plugins
-    #extraPlugins = with pkgs.vimPlugins; [
-    #  catppuccin-nvim
-    #];
-
-    # Example: Add extra Lua config
-    #extraLuaConfig = ''
-    #  vim.cmd("colorscheme catppuccin")
-    #  require("catppuccin").setup({})
-    #'';
-  };
-
-  # Obsidian
-  custom.obsidian = {
-    enable = false;
-    # vaultPaths = userVars.obsidian.vaultPaths;
-  };
-
-  # Goose CLI
-  custom.goose = {
-    enable = false;
-    # # lead model
-    # leadProvider = "github_copilot";
-    # leadModel = "gpt-4.1";
-    # # worker model (using Copilot to avoid Anthropic API costs)
-    # provider = "github_copilot";
-    # model = "gpt-4o";
-    #extraEnv = {
-    #  GOOSE_TEMPERATURE = "0.7";
-    #};
-  };
+  # Goose CLI (disabled by default)
+  custom.goose.enable = false;
 
   # Claude Code CLI
   custom.claudeCode = {
@@ -126,9 +80,6 @@
         ];
       };
     };
-    #extraEnv = {
-    #  CLAUDE_CODE_MODEL = "default";
-    #};
   };
 
   # Fish shell
@@ -137,7 +88,7 @@
   # Starship prompt
   custom.starship.enable = true;
 
-  # k9s TUI
+  # k9s TUI for Kubernetes
   custom.k9s.enable = true;
 
   # GitHub Copilot CLI
