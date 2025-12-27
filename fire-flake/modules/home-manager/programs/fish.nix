@@ -23,6 +23,11 @@ in {
       '';
       shellAliases = {
         jg = "just -g";
+        snn = "kitten ssh 'adhitya.ravi@canonical.com'@nikoneko";
+        sii = "kitten ssh ivdi@ikiikiinu";
+        hkk = "home-manager --impure switch --flake .#kawaiikuma";
+        hnn = "home-manager --impure switch --flake .#nikoneko";
+        hii = "home-manager --impure switch --flake .#ikiikiinu";
       };
     };
 

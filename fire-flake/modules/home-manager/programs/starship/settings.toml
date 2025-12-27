@@ -1,7 +1,8 @@
-# version: 1.0.0
+# version: 3.0.0
+# Theme: Retro Green Terminal (CRT phosphor)
 
 add_newline = true
-continuation_prompt = "[▸▹ ](#928374)"  # dim white
+continuation_prompt = "[.. ](bright-black)"
 
 format = """($nix_shell$container$fill$git_metrics\n)$cmd_duration\
 $localip\
@@ -10,8 +11,7 @@ $shell\
 $env_var\
 $jobs\
 $sudo\
-$os\
-$username@$hostname\
+$username@$hostname \
 $directory\n\
 $character"""
 
@@ -85,251 +85,251 @@ $crystal\
 $custom\
 $status\
 $battery\
-$time"""
+${custom.hosticon}"""
 
 [os]
-disabled = false
-style = "fg:#e69875"
-
-[os.symbols]
-Windows = "󰍲 "
-Ubuntu = "󰕈 "
-SUSE = " "
-Raspbian = "󰐿 "
-Mint = "󰣭 "
-Macos = "󰀵 "
-Manjaro = " "
-Linux = "󰌽 "
-Gentoo = "󰣨 "
-Fedora = "󰣛 "
-Alpine = " "
-Amazon = " "
-Android = " "
-Arch = "󰣇 "
-Artix = "󰣇 "
-EndeavourOS = " "
-CentOS = " "
-Debian = "󰣚 "
-Redhat = "󱄛 "
-RedHatEnterprise = "󱄛 "
-Pop = " "
-NixOS = " "
+disabled = true
 
 [fill]
 symbol = ' '
 
 [character]
 format = "$symbol "
-success_symbol = "[❯](bold italic #00FF00)"
-error_symbol = "[○](italic #d699b6)"
-vimcmd_symbol = "[■](italic #a7c080)"
-vimcmd_replace_one_symbol = "◌"
-vimcmd_replace_symbol = "□"
-vimcmd_visual_symbol = "▼"
+success_symbol = "[❯](green)"
+error_symbol = "[x](bright-black)"
+vimcmd_symbol = "[<](green)"
+vimcmd_replace_one_symbol = "r"
+vimcmd_replace_symbol = "R"
+vimcmd_visual_symbol = "v"
 
 [env_var.VIMSHELL]
 format = "[$env_value]($style)"
-style = "#a7c080 italic"
+style = "green"
 
 [sudo]
 format = "[$symbol]($style)"
-style = "bold italic #d699b6"
-symbol = "⋈┈"
+style = "bold green"
+symbol = "#"
 disabled = false
 
 [username]
-style_user = "#dbbc7f bold italic"
-style_root = "#d699b6 bold italic"
+style_user = "green"
+style_root = "bold green"
 format = "[$user]($style)"
 disabled = false
 show_always = true
 
 [directory]
-home_symbol = "⌂"
+home_symbol = "~"
 truncation_length = 2
-truncation_symbol = "⋯"
-read_only = " ◈"
+truncation_symbol = "/"
+read_only = " [ro]"
 use_os_path_sep = true
-style = "italic #7fbbb3"
+style = "#ffb000"
 format = '[$path]($style)[$read_only]($read_only_style)'
-repo_root_style = 'bold #7fbbb3'
+repo_root_style = 'bold #ffb000'
 repo_root_format = '[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style)'
 
 [cmd_duration]
-format = "[◄ $duration ](italic #d3c6aa)"
+format = "[$duration ](bright-black)"
 
 [jobs]
 format = "[$symbol$number]($style) "
-style = "#d3c6aa"
-symbol = "[▶](italic #7fbbb3)"#e69875
+style = "green"
+symbol = "&"
 
 [localip]
 ssh_only = true
-format = " ◯[$localipv4](bold #d699b6)"
+format = " [$localipv4](green)"
 disabled = true
 
 [hostname]
 ssh_only = false
-style = "#928374"
+style = "bright-black"
+format = "[$hostname](bright-black)"
+
+[custom.hosticon]
+command = '''
+case $(hostname) in
+  kawaiikuma) echo "ʕ ᵔᴥᵔ ʔ" ;;
+  nikoneko) echo "≽^•⩊•^≼" ;;
+  ikiikiinu) echo "∪^ェ^∪" ;;
+  *) echo "[°□°]" ;;
+esac
+'''
+when = "true"
+shell = ["sh"]
+format = "[$output ](green)"
 
 [time]
-disabled = false
-format = "[$time]($style)"
-time_format = "%R"
-utc_time_offset = "local"
-style = "italic #928374"
+disabled = true
 
 [battery]
-format = "[ $percentage $symbol]($style)"
-full_symbol = "█"
-charging_symbol = "[↑](italic bold #a7c080)"
-discharging_symbol = "↓"
-unknown_symbol = "░"
-empty_symbol = "▃"
+format = "[$percentage$symbol]($style)"
+full_symbol = ""
+charging_symbol = "+"
+discharging_symbol = "-"
+unknown_symbol = "?"
+empty_symbol = "!"
 
 [[battery.display]]
 threshold = 20
-style = "italic bold #e67e80"
+style = "bright-black"
 
 [[battery.display]]
 threshold = 60
-style = "italic #d699b6"
+style = "bright-black"
 
 [[battery.display]]
 threshold = 70
-style = "italic #dbbc7f"
+style = "green"
 
 [git_branch]
 format = " [$symbol$branch(:$remote_branch)]($style)"
-symbol = "[ ](bold italic #e69875)"
-style = "italic #e69875"
-truncation_symbol = "⋯"
+symbol = ""
+style = "green"
+truncation_symbol = ".."
 truncation_length = 20
 ignore_branches = ["main", "master"]
 only_attached = true
 
 [deno]
-format = " [deno](italic) [∫ $version](#a7c080 bold)"
+format = " [deno](bright-black) [$version](green)"
 version_format = "${raw}"
 
 [lua]
-format = " [lua](italic) [${symbol}${version}]($style)"
+format = " [lua](bright-black) [$version]($style)"
 version_format = "${raw}"
-symbol = "⨀ "
-style = "bold #dbbc7f"
+symbol = ""
+style = "green"
 
 [nodejs]
-format = " [node](italic) [◫ ($version)](bold #a7c080)"
+format = " [node](bright-black) [$version](green)"
 version_format = "${raw}"
 detect_files = ["package-lock.json", "yarn.lock"]
 detect_folders = ["node_modules"]
 detect_extensions = []
 
 [python]
-format = " [py](italic) [${symbol}${version}]($style)"
-symbol = "[⌉](bold #7fbbb3)⌊ "
+format = " [py](bright-black) [${symbol}${version}]($style)"
+symbol = ""
 version_format = "${raw}"
-style = "bold #dbbc7f"
+style = "green"
 
 [ruby]
-format = " [rb](italic) [${symbol}${version}]($style)"
-symbol = "◆ "
+format = " [rb](bright-black) [$version]($style)"
+symbol = ""
 version_format = "${raw}"
-style = "bold #e67e80"
+style = "green"
 
 [rust]
-format = " [rs](italic) [$symbol$version]($style)"
-symbol = "⊃ "
+format = " [rs](bright-black) [$version]($style)"
+symbol = ""
 version_format = "${raw}"
-style = "bold #e67e80"
+style = "green"
 
 [package]
-format = " [pkg](italic) [$symbol$version]($style)"
+format = " [pkg](bright-black) [$version]($style)"
 version_format = "${raw}"
-symbol = "◨ "
-style = "italic bold #dbbc7f"
+symbol = ""
+style = "green"
 
 [swift]
-format = " [sw](italic) [${symbol}${version}]($style)"
-symbol = "◁ "
-style = "bold #e67e80"
+format = " [sw](bright-black) [$version]($style)"
+symbol = ""
+style = "green"
 version_format = "${raw}"
 
 [aws]
 disabled = true
-format = " [aws](italic) [$symbol $profile $region]($style)"
-style = "bold #7fbbb3"
-symbol = "▲ "
+format = " [aws](bright-black) [$profile $region]($style)"
+style = "green"
+symbol = ""
 
 [buf]
-symbol = "■ "
-format = " [buf](italic) [$symbol $version $buf_version]($style)"
+symbol = ""
+format = " [buf](bright-black) [$version]($style)"
+style = "green"
 
 [c]
-symbol = "ℂ "
-format = " [$symbol($version(-$name))]($style)"
+symbol = ""
+format = " [c](bright-black) [$version]($style)"
+style = "green"
 
 [cpp]
-symbol = "ℂ "
-format = " [$symbol($version(-$name))]($style)"
+symbol = ""
+format = " [cpp](bright-black) [$version]($style)"
+style = "green"
 
 [conda]
-symbol = "◯ "
-format = " conda [$symbol$environment]($style)"
+symbol = ""
+format = " [conda](bright-black) [$environment]($style)"
+style = "green"
 
 [pixi]
-symbol = "■ "
-format = " pixi [$symbol$version ($environment )]($style)"
+symbol = ""
+format = " [pixi](bright-black) [$version $environment]($style)"
+style = "green"
 
 [dart]
-symbol = "◁◅ "
-format = " dart [$symbol($version )]($style)"
+symbol = ""
+format = " [dart](bright-black) [$version]($style)"
+style = "green"
 
 [docker_context]
-symbol = "◧ "
-format = " docker [$symbol$context]($style)"
+symbol = ""
+format = " [docker](bright-black) [$context]($style)"
+style = "green"
 
 [elixir]
-symbol = "△ "
-format = " exs [$symbol $version OTP $otp_version ]($style)"
+symbol = ""
+format = " [exs](bright-black) [$version]($style)"
+style = "green"
 
 [elm]
-symbol = "◩ "
-format = " elm [$symbol($version )]($style)"
+symbol = ""
+format = " [elm](bright-black) [$version]($style)"
+style = "green"
 
 [golang]
-symbol = "∩ "
-format = " go [$symbol($version )]($style)"
+symbol = ""
+format = " [go](bright-black) [$version]($style)"
+style = "green"
 
 [haskell]
-symbol = "❯λ "
-format = " hs [$symbol($version )]($style)"
+symbol = ""
+format = " [hs](bright-black) [$version]($style)"
+style = "green"
 
 [java]
-symbol = "∪ "
-format = " java [${symbol}(${version} )]($style)"
+symbol = ""
+format = " [java](bright-black) [$version]($style)"
+style = "green"
 
 [julia]
-symbol = "◎ "
-format = " jl [$symbol($version )]($style)"
+symbol = ""
+format = " [jl](bright-black) [$version]($style)"
+style = "green"
 
 [memory_usage]
-symbol = "▪▫▪ "
-format = " mem [${ram}( ${swap})]($style)"
+symbol = ""
+format = " [mem](bright-black) [${ram}]($style)"
+style = "green"
 
 [nim]
-symbol = "▴▲▴ "
-format = " nim [$symbol($version )]($style)"
+symbol = ""
+format = " [nim](bright-black) [$version]($style)"
+style = "green"
 
 [nix_shell]
-style = 'bold italic #7fbbb3'
-symbol = '✶'
-format = '[$symbol nix⎪$state⎪]($style) [$name](italic #d3c6aa)'
-impure_msg = '[⌽](bold #e67e80)'
-pure_msg = '[⌾](bold #a7c080)'
-unknown_msg = '[◌](bold #dbbc7f)'
+style = 'green'
+symbol = 'nix'
+format = '[$symbol:$state]($style) [$name](bright-black)'
+impure_msg = 'i'
+pure_msg = 'p'
+unknown_msg = '?'
 
 [spack]
-symbol = "◇ "
-format = " spack [$symbol$environment]($style)"
-
+symbol = ""
+format = " [spack](bright-black) [$environment]($style)"
+style = "green"

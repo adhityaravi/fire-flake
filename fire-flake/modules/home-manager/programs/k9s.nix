@@ -4,7 +4,9 @@ let
 
   # k9s with CGO enabled for LDAP/NSS user lookup support
   k9s-cgo = pkgs.k9s.overrideAttrs (old: {
-    CGO_ENABLED = 1;
+    env = (old.env or { }) // {
+      CGO_ENABLED = "1";
+    };
     buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.glibc ];
   });
 in {
