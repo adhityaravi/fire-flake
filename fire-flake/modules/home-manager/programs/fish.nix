@@ -6,9 +6,19 @@ let
 in {
   options.custom.fish = {
     enable = lib.mkEnableOption "Enable fish shell";
+    setDefault = lib.mkEnableOption "Launch fish from bashrc (for LDAP users who can't use chsh)";
   };
 
   config = lib.mkIf cfg.enable {
+    # Launch fish from bash for LDAP users (both login and interactive shells)
+    programs.bash = lib.mkIf cfg.setDefault {
+      enable = true;
+      profileExtra = ''
+        if [ -x "$HOME/.nix-profile/bin/fish" ]; then
+          exec "$HOME/.nix-profile/bin/fish" -l
+        fi
+      '';
+    };
     programs.fish = {
       enable = true;
       loginShellInit = ''

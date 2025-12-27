@@ -2,13 +2,19 @@
 let
   cfg = config.custom.k9s;
 
-  # k9s with CGO enabled for LDAP/NSS user lookup support
-  k9s-cgo = pkgs.k9s.overrideAttrs (old: {
-    env = (old.env or { }) // {
-      CGO_ENABLED = "1";
-    };
-    buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.glibc ];
-  });
+  # Wrapper for k9s that uses nss_wrapper to fake passwd entry for LDAP users
+  k9s-ldap-wrapper = pkgs.writeShellScriptBin "k9s" ''
+    export NSS_WRAPPER_PASSWD="$HOME/.k9s-passwd"
+    export NSS_WRAPPER_GROUP="/etc/group"
+
+    # Create fake passwd entry if it doesn't exist
+    if [ ! -f "$NSS_WRAPPER_PASSWD" ]; then
+      echo "$(id -un):x:$(id -u):$(id -g)::$HOME:/bin/sh" > "$NSS_WRAPPER_PASSWD"
+    fi
+
+    export LD_PRELOAD="${pkgs.nss_wrapper}/lib/libnss_wrapper.so"
+    exec ${pkgs.k9s}/bin/k9s "$@"
+  '';
 in {
   options.custom.k9s = {
     enable = lib.mkEnableOption "Enable k9s.";
@@ -19,14 +25,16 @@ in {
       description = "k9s package to install.";
     };
 
-    enableCgo = lib.mkOption {
+    ldapWorkaround = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Build k9s with CGO enabled for LDAP/NSS user lookup support.";
+      description = "Use nss_wrapper to work around LDAP user lookup issues.";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ (if cfg.enableCgo then k9s-cgo else cfg.package) ];
+    home.packages = [
+      (if cfg.ldapWorkaround then k9s-ldap-wrapper else cfg.package)
+    ];
   };
 }

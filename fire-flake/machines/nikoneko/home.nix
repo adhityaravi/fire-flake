@@ -84,7 +84,10 @@
   };
 
   # Fish shell
-  custom.fish.enable = true;
+  custom.fish = {
+    enable = true;
+    setDefault = true; # Launch fish from bashrc (LDAP user can't use chsh)
+  };
 
   # Starship prompt
   custom.starship.enable = true;
@@ -92,7 +95,7 @@
   # k9s TUI for Kubernetes
   custom.k9s = {
     enable = true;
-    enableCgo = true; # Required for LDAP user lookup
+    ldapWorkaround = true;
   };
 
   # Kitty terminfo for SSH sessions

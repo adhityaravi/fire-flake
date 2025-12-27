@@ -151,9 +151,9 @@ format = "[$hostname](bright-black)"
 [custom.hosticon]
 command = '''
 case $(hostname) in
-  kawaiikuma) echo "ʕ ᵔᴥᵔ ʔ" ;;
-  nikoneko) echo "≽^•⩊•^≼" ;;
-  ikiikiinu) echo "∪^ェ^∪" ;;
+  kawaiikuma) echo " ʕ ᵔᴥᵔ ʔ" ;;
+  nikoneko) echo " ≽^•⩊•^≼" ;;
+  ikiikiinu) echo " ▼・ᴥ・▼" ;;
   *) echo "[°□°]" ;;
 esac
 '''
