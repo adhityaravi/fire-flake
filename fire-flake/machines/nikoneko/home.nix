@@ -90,7 +90,10 @@
   custom.starship.enable = true;
 
   # k9s TUI for Kubernetes
-  custom.k9s.enable = true;
+  custom.k9s = {
+    enable = true;
+    enableCgo = true; # Required for LDAP user lookup
+  };
 
   # Kitty terminfo for SSH sessions
   custom.kitty-terminfo.enable = true;
