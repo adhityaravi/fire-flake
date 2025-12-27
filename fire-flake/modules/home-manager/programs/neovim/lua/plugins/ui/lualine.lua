@@ -79,7 +79,7 @@ require("lualine").setup({
     },
 
     sections = {
-      lualine_a = { "mode" },
+      lualine_a = { "hostname", "mode" },
 
       lualine_b = {
         "branch",
