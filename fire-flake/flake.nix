@@ -84,7 +84,18 @@
         };
       };
 
-      # ikiikiinu JonsboN5 Ubuntu Server TBD
+      # ikiikiinu JonsboN5 Ubuntu Server - home lab
+      ikiikiinu = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+
+        modules = [
+          ./machines/ikiikiinu/home.nix
+        ];
+
+        extraSpecialArgs = {
+          inherit userVars nurpkgs;
+        };
+      };
     };
   };
 }

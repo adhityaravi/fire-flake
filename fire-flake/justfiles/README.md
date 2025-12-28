@@ -45,11 +45,11 @@ This directory contains modular justfile recipes that can be enabled per-profile
 
 ## Usage
 
-After rebuilding your home-manager configuration, you can run recipes globally:
+After rebuilding your home-manager configuration, you can run recipes globally using the `jg` alias (or `just -g`):
 
 ```bash
-just -g setup-charm-dev    # Run global justfile
-just -g <recipe-name>       # Any recipe from enabled modules
+jg charmdev-setup      # Setup charm development environment
+jg <recipe-name>       # Any recipe from enabled modules
 ```
 
 Or without `-g` if you're in a directory without a local justfile.

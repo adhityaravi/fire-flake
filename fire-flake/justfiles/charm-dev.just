@@ -1,5 +1,5 @@
 # Justfile for setting up and nuking a charm development environment
-# Usage: just -g k8s=ck8s charmdev-setup  (or k8s=microk8s, which is the default)
+# Usage: jg k8s=ck8s charmdev-setup  (or k8s=microk8s, which is the default)
 
 # Default Kubernetes flavor: "microk8s" or "ck8s"
 k8s := "microk8s"
@@ -143,40 +143,40 @@ charmdev-tools-nuke:
 # ====================================================================
 
 # Setup charm development environment
-# Usage: just -g charmdev-setup              (defaults to microk8s)
-#        just -g k8s=ck8s charmdev-setup     (for Canonical K8s)
+# Usage: jg charmdev-setup              (defaults to microk8s)
+#        jg k8s=ck8s charmdev-setup     (for Canonical K8s)
 charmdev-setup:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
         echo "Setting up MicroK8s charm development environment..."
-        just -g charmdev-microk8s-install
-        just -g charmdev-microk8s-setup
-        just -g charmdev-microk8s-juju-bootstrap
-        just -g charmdev-microk8s-export-kubeconfig
+        jg charmdev-microk8s-install
+        jg charmdev-microk8s-setup
+        jg charmdev-microk8s-juju-bootstrap
+        jg charmdev-microk8s-export-kubeconfig
     elif [ "{{k8s}}" = "ck8s" ]; then
         echo "Setting up Canonical K8s charm development environment..."
-        just -g charmdev-ck8s-install
-        just -g charmdev-ck8s-setup
-        just -g charmdev-ck8s-juju-bootstrap
-        just -g charmdev-ck8s-export-kubeconfig
+        jg charmdev-ck8s-install
+        jg charmdev-ck8s-setup
+        jg charmdev-ck8s-juju-bootstrap
+        jg charmdev-ck8s-export-kubeconfig
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
     fi
 
 # Nuke charm development environment
-# Usage: just -g charmdev-nuke              (defaults to microk8s)
-#        just -g k8s=ck8s charmdev-nuke     (for Canonical K8s)
+# Usage: jg charmdev-nuke              (defaults to microk8s)
+#        jg k8s=ck8s charmdev-nuke     (for Canonical K8s)
 charmdev-nuke:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
         echo "Nuking MicroK8s charm development environment..."
-        just -g charmdev-microk8s-nuke
+        jg charmdev-microk8s-nuke
     elif [ "{{k8s}}" = "ck8s" ]; then
         echo "Nuking Canonical K8s charm development environment..."
-        just -g charmdev-ck8s-nuke
+        jg charmdev-ck8s-nuke
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1

@@ -1,5 +1,5 @@
 # Justfile for managing Tailscale service (home-manager managed binary)
-# Usage: just -g tailscale-setup
+# Usage: jg tailscale-setup
 
 # ====================================================================
 # TAILSCALE RECIPES
@@ -41,9 +41,9 @@ tailscale-stop:
     sudo systemctl disable tailscaled
 
 # Run any tailscale command with sudo (handles PATH)
-# Usage: just -g ts up --ssh
-#        just -g ts status
-#        just -g ts down
+# Usage: jg ts up --ssh
+#        jg ts status
+#        jg ts down
 ts *ARGS:
     sudo env "PATH=$PATH" tailscale {{ ARGS }}
 
