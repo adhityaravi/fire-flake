@@ -76,6 +76,7 @@
         psmisc
         xz
         unzip
+        lm_sensors
       ];
       description = "Low-level system utilities (e.g. lsof, htop, iotop).";
     };
