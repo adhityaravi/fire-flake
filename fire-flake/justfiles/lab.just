@@ -46,6 +46,29 @@ zfs-scrub-status:
 zfs-snapshots:
     sudo zfs list -t snapshot
 
+# Install ZFS utilities
+zfs-install:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Installing ZFS utilities..."
+    sudo apt update
+    sudo apt install -y zfsutils-linux
+    echo "ZFS installed. Verify with: jg zfs-status"
+
+# Run any wipefs command with sudo (for cleaning disks)
+# Usage: jg wipefs -a /dev/sda
+wipefs *ARGS:
+    sudo wipefs {{ ARGS }}
+
+# Run any mdadm command with sudo (for managing RAID arrays)
+# Usage: jg mdadm --stop /dev/md127
+mdadm *ARGS:
+    sudo mdadm {{ ARGS }}
+
+# Show available disks (excludes snap loop devices)
+lsblk:
+    lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | grep -v loop
+
 # ====================================================================
 # UNATTENDED-UPGRADES RECIPES
 # ====================================================================
