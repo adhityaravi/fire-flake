@@ -150,16 +150,16 @@ charmdev-setup:
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
         echo "Setting up MicroK8s charm development environment..."
-        jg charmdev-microk8s-install
-        jg charmdev-microk8s-setup
-        jg charmdev-microk8s-juju-bootstrap
-        jg charmdev-microk8s-export-kubeconfig
+        just -g charmdev-microk8s-install
+        just -g charmdev-microk8s-setup
+        just -g charmdev-microk8s-juju-bootstrap
+        just -g charmdev-microk8s-export-kubeconfig
     elif [ "{{k8s}}" = "ck8s" ]; then
         echo "Setting up Canonical K8s charm development environment..."
-        jg charmdev-ck8s-install
-        jg charmdev-ck8s-setup
-        jg charmdev-ck8s-juju-bootstrap
-        jg charmdev-ck8s-export-kubeconfig
+        just -g charmdev-ck8s-install
+        just -g charmdev-ck8s-setup
+        just -g charmdev-ck8s-juju-bootstrap
+        just -g charmdev-ck8s-export-kubeconfig
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
@@ -173,10 +173,10 @@ charmdev-nuke:
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
         echo "Nuking MicroK8s charm development environment..."
-        jg charmdev-microk8s-nuke
+        just -g charmdev-microk8s-nuke
     elif [ "{{k8s}}" = "ck8s" ]; then
         echo "Nuking Canonical K8s charm development environment..."
-        jg charmdev-ck8s-nuke
+        just -g charmdev-ck8s-nuke
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
