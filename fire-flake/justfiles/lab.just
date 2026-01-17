@@ -292,7 +292,7 @@ fan-disable:
 
 # Show fancontrol service status
 fan-status:
-    sudo systemctl status fancontrol
+    -sudo systemctl status fancontrol --no-pager
 
 # Restart fancontrol service (after config changes)
 fan-restart:

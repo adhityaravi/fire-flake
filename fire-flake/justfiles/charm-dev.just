@@ -28,7 +28,7 @@ charmdev-microk8s-setup:
     sudo microk8s enable rbac
     sudo microk8s enable hostpath-storage
     sudo microk8s kubectl rollout status deployments/hostpath-provisioner -n kube-system -w --timeout=600s
-    IPADDR=$(ip -4 -j route get 2.2.2.2 | jq -r '.[] | .prefsrc'); sudo microk8s enable metallb:$IPADDR-$IPADDR
+    IPADDR=$(ip -4 -j route get 2.2.2.2 | jq -r '.[] | .prefsrc'); IFS='.' read -r a b c d <<< "$IPADDR"; sudo microk8s enable metallb:$IPADDR-$a.$b.$c.$((d + 9))
     sudo microk8s kubectl rollout status daemonset.apps/speaker -n metallb-system -w --timeout=600s
     sudo microk8s enable registry
     sudo microk8s kubectl rollout status deployment.apps/registry -n container-registry -w --timeout=600s
@@ -83,7 +83,7 @@ charmdev-ck8s-setup:
     sudo k8s enable local-storage
     # Enable load-balancer with L2 mode
     sudo k8s enable load-balancer
-    IPADDR=$(ip -4 -j route get 2.2.2.2 | jq -r '.[] | .prefsrc'); sudo k8s set load-balancer.cidrs=$IPADDR/32 load-balancer.l2-mode=true
+    IPADDR=$(ip -4 -j route get 2.2.2.2 | jq -r '.[] | .prefsrc'); IFS='.' read -r a b c d <<< "$IPADDR"; sudo k8s set load-balancer.cidrs=$a.$b.$c.$d-$a.$b.$c.$((d + 9)) load-balancer.l2-mode=true
     # Enable gateway API
     sudo k8s enable gateway
 
