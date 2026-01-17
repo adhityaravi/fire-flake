@@ -7,6 +7,7 @@ let
   globalJustfile = pkgs.writeText "justfile" (
     lib.concatStringsSep "\n\n" (
       lib.optionals cfg.recipes.charm-dev [(builtins.readFile ../../../justfiles/charm-dev.just)]
+      ++ lib.optionals cfg.recipes.charmarr-primitives [(builtins.readFile ../../../justfiles/charmarr-primitives.just)]
       ++ lib.optionals cfg.recipes.tailscale [(builtins.readFile ../../../justfiles/tailscale.just)]
       ++ lib.optionals cfg.recipes.runner [(builtins.readFile ../../../justfiles/runner.just)]
       ++ lib.optionals cfg.recipes.lab [(builtins.readFile ../../../justfiles/lab.just)]
@@ -19,6 +20,7 @@ in
 
     recipes = {
       charm-dev = lib.mkEnableOption "Include charm development recipes";
+      charmarr-primitives = lib.mkEnableOption "Include charmarr infrastructure primitives (K8s + Juju only)";
       tailscale = lib.mkEnableOption "Include tailscale service management recipes";
       runner = lib.mkEnableOption "Include GitHub Actions runner recipes";
       lab = lib.mkEnableOption "Include home lab recipes (ZFS, unattended-upgrades, NFS)";
@@ -32,7 +34,7 @@ in
 
     # Install global justfile to ~/.config/just/justfile
     xdg.configFile."just/justfile" = lib.mkIf (
-      cfg.recipes.charm-dev || cfg.recipes.tailscale || cfg.recipes.runner || cfg.recipes.lab
+      cfg.recipes.charm-dev || cfg.recipes.charmarr-primitives || cfg.recipes.tailscale || cfg.recipes.runner || cfg.recipes.lab
     ) {
       source = globalJustfile;
     };

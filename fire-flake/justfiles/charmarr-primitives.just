@@ -1,15 +1,24 @@
-# Justfile for setting up and nuking a charm development environment
-# Usage: jg k8s=ck8s charmdev-setup  (or k8s=microk8s, which is the default)
+# Justfile for setting up charmarr infrastructure prerequisites (K8s + Juju)
+# A subset of charm-dev focused on just the k8s and juju bootstrap - no LXC or charmcraft tools
+#
+# Global usage:  jg charmarr-primitives-setup
+#                jg k8s=ck8s charmarr-primitives-setup
+#
+# Standalone:    just -f /path/to/charmarr-primitives.just charmarr-primitives-setup
+#                just -f /path/to/charmarr-primitives.just k8s=ck8s charmarr-primitives-setup
 
 # Default Kubernetes flavor: "microk8s" or "ck8s"
 k8s := "microk8s"
+
+# Use current justfile for internal calls (works both globally and standalone)
+_just := "just --justfile " + justfile()
 
 # ====================================================================
 # MICROK8S RECIPES
 # ====================================================================
 
 [private]
-charmdev-microk8s-install:
+charmarr-primitives-microk8s-install:
     # Install Juju and MicroK8s
     sudo snap install juju --channel=3.6/stable
     sudo snap install microk8s --channel=1.32/stable --classic
@@ -17,7 +26,7 @@ charmdev-microk8s-install:
     sudo snap alias microk8s.kubectl k
 
 [private]
-charmdev-microk8s-setup:
+charmarr-primitives-microk8s-setup:
     #!/usr/bin/env bash
     set -euo pipefail
     # Configure MicroK8s and enable required addons
@@ -38,21 +47,21 @@ charmdev-microk8s-setup:
     sudo microk8s kubectl rollout status deployment.apps/registry -n container-registry -w --timeout=600s
 
 [private]
-charmdev-microk8s-juju-bootstrap:
+charmarr-primitives-microk8s-juju-bootstrap:
     # Bootstrap MicroK8s controller and create default model
     sudo microk8s config | juju add-k8s mcrk8s --client
     juju bootstrap mcrk8s mcrk8s
     juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
-                   --config update-status-hook-interval="60m" welcome-k8s
+                   --config update-status-hook-interval="60m" charmarr
 
 [private]
-charmdev-microk8s-export-kubeconfig:
+charmarr-primitives-microk8s-export-kubeconfig:
     # Save kubeconfig to user's home
     mkdir -p $HOME/.kube
     sudo microk8s config > $HOME/.kube/config
 
 [private]
-charmdev-microk8s-nuke:
+charmarr-primitives-microk8s-nuke:
     # Destroy Juju controllers and remove Juju/MicroK8s
     sudo snap remove --purge juju || true
     sudo snap remove --purge microk8s || true
@@ -66,14 +75,14 @@ charmdev-microk8s-nuke:
 # ====================================================================
 
 [private]
-charmdev-ck8s-install:
+charmarr-primitives-ck8s-install:
     # Install Juju and Canonical K8s
     sudo snap install juju --channel=3.6/stable
     sudo snap install k8s --classic --channel=1.32-classic/stable
     sudo snap install kubectl --classic
 
 [private]
-charmdev-ck8s-setup:
+charmarr-primitives-ck8s-setup:
     #!/usr/bin/env bash
     set -euo pipefail
     # Bootstrap Canonical K8s and enable required features
@@ -96,24 +105,21 @@ charmdev-ck8s-setup:
     sudo k8s enable gateway
 
 [private]
-charmdev-ck8s-juju-bootstrap:
-    # Bootstrap both LXD and Canonical K8s controllers and create default models
-    juju bootstrap localhost lxd
-    juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
-                   --config update-status-hook-interval="60m" welcome-lxd
+charmarr-primitives-ck8s-juju-bootstrap:
+    # Bootstrap Canonical K8s controller and create default model (no LXD)
     sudo k8s config | juju add-k8s ck8s --client
     juju bootstrap ck8s ck8s
     juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" \
-                   --config update-status-hook-interval="60m" welcome-k8s
+                   --config update-status-hook-interval="60m" charmarr
 
 [private]
-charmdev-ck8s-export-kubeconfig:
+charmarr-primitives-ck8s-export-kubeconfig:
     # Save kubeconfig to user's home
     mkdir -p $HOME/.kube
     sudo k8s config > $HOME/.kube/config
 
 [private]
-charmdev-ck8s-nuke:
+charmarr-primitives-ck8s-nuke:
     # Destroy Juju controllers and remove Juju/Canonical K8s
     sudo snap remove --purge juju || true
     sudo snap remove --purge k8s || true
@@ -124,68 +130,51 @@ charmdev-ck8s-nuke:
     rm -f ~/.kube/config
 
 # ====================================================================
-# DEV TOOLING
-# ====================================================================
-
-charmdev-tools-setup:
-    # Tools to support Juju + charmcraft workflow
-    sudo snap install --classic charmcraft
-    sudo snap install --classic rockcraft
-    sudo snap install jhack --channel=latest/stable
-    sudo snap install --classic astral-uv
-    sudo snap install yq
-    sudo snap install jq
-
-charmdev-tools-nuke:
-    # Remove all development tooling
-    sudo snap remove --purge charmcraft || true
-    sudo snap remove --purge rockcraft || true
-    sudo snap remove --purge jhack || true
-    sudo snap remove --purge astral-uv || true
-    sudo snap remove --purge yq || true
-    sudo snap remove --purge jq || true
-    sudo snap remove --purge just || true
-
-# ====================================================================
 # COMPOSITE RECIPES (use k8s=microk8s or k8s=ck8s)
 # ====================================================================
 
-# Setup charm development environment
-# Usage: jg charmdev-setup              (defaults to microk8s)
-#        jg k8s=ck8s charmdev-setup     (for Canonical K8s)
-charmdev-setup:
+# Setup charmarr infrastructure prerequisites
+# Usage: jg charmarr-primitives-setup              (defaults to microk8s)
+#        jg k8s=ck8s charmarr-primitives-setup     (for Canonical K8s)
+charmarr-primitives-setup:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
-        echo "Setting up MicroK8s charm development environment..."
-        just -g charmdev-microk8s-install
-        just -g charmdev-microk8s-setup
-        just -g charmdev-microk8s-juju-bootstrap
-        just -g charmdev-microk8s-export-kubeconfig
+        echo "Setting up MicroK8s for charmarr..."
+        {{_just}} charmarr-primitives-microk8s-install
+        {{_just}} charmarr-primitives-microk8s-setup
+        {{_just}} charmarr-primitives-microk8s-juju-bootstrap
+        {{_just}} charmarr-primitives-microk8s-export-kubeconfig
     elif [ "{{k8s}}" = "ck8s" ]; then
-        echo "Setting up Canonical K8s charm development environment..."
-        just -g charmdev-ck8s-install
-        just -g charmdev-ck8s-setup
-        just -g charmdev-ck8s-juju-bootstrap
-        just -g charmdev-ck8s-export-kubeconfig
+        echo "Setting up Canonical K8s for charmarr..."
+        {{_just}} charmarr-primitives-ck8s-install
+        {{_just}} charmarr-primitives-ck8s-setup
+        {{_just}} charmarr-primitives-ck8s-juju-bootstrap
+        {{_just}} charmarr-primitives-ck8s-export-kubeconfig
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
     fi
+    echo ""
+    echo "Charmarr infrastructure ready!"
+    echo "  - K8s flavor: {{k8s}}"
+    echo "  - Juju controller bootstrapped"
+    echo "  - Model 'charmarr' created"
 
-# Nuke charm development environment
-# Usage: jg charmdev-nuke              (defaults to microk8s)
-#        jg k8s=ck8s charmdev-nuke     (for Canonical K8s)
-charmdev-nuke:
+# Nuke charmarr infrastructure
+# Usage: jg charmarr-primitives-nuke              (defaults to microk8s)
+#        jg k8s=ck8s charmarr-primitives-nuke     (for Canonical K8s)
+charmarr-primitives-nuke:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{k8s}}" = "microk8s" ]; then
-        echo "Nuking MicroK8s charm development environment..."
-        just -g charmdev-microk8s-nuke
+        echo "Nuking MicroK8s charmarr infrastructure..."
+        {{_just}} charmarr-primitives-microk8s-nuke
     elif [ "{{k8s}}" = "ck8s" ]; then
-        echo "Nuking Canonical K8s charm development environment..."
-        just -g charmdev-ck8s-nuke
+        echo "Nuking Canonical K8s charmarr infrastructure..."
+        {{_just}} charmarr-primitives-ck8s-nuke
     else
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
     fi
+    echo "Charmarr infrastructure nuked."
