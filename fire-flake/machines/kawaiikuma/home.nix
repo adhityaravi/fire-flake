@@ -19,6 +19,7 @@
     ../../modules/home-manager/programs/copilot-cli.nix
     ../../modules/home-manager/programs/semtools.nix
     ../../modules/home-manager/programs/tailscale.nix
+    ../../modules/home-manager/programs/asciinema.nix
     ../../modules/home-manager/common.nix
   ];
 
@@ -148,4 +149,7 @@
 
   # Tailscale
   custom.tailscale.enable = true;
+
+  # Asciinema terminal recording
+  custom.asciinema.enable = true;
 }
