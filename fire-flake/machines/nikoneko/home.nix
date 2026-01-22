@@ -11,7 +11,6 @@
     ../../modules/home-manager/programs/lazygit.nix
     ../../modules/home-manager/programs/just.nix
     ../../modules/home-manager/programs/neovim.nix
-    ../../modules/home-manager/programs/goose.nix
     ../../modules/home-manager/programs/claude-code.nix
     ../../modules/home-manager/programs/fish.nix
     ../../modules/home-manager/programs/starship/starship.nix
@@ -21,7 +20,6 @@
     ../../modules/home-manager/programs/semtools.nix
     ../../modules/home-manager/programs/tailscale.nix
     ../../modules/home-manager/common.nix
-    # NOTE: No GUI apps (kitty, obsidian) - this is a headless SSH workstation
   ];
 
   home = {
@@ -53,9 +51,6 @@
 
   # Neovim
   custom.neovim.enable = true;
-
-  # Goose CLI (disabled by default)
-  custom.goose.enable = false;
 
   # Claude Code CLI
   custom.claudeCode = {

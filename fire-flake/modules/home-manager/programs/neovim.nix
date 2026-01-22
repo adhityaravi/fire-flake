@@ -17,11 +17,6 @@ in
       default = "";
       description = "Extra Lua config to be injected after core setup.";
     };
-    obsidianVaultPaths = lib.mkOption {
-      type = with lib.types; listOf str;
-      default = [];
-      description = "Paths to Obsidian vaults (relative to the home directory) used by obsidian.nvim.";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -48,16 +43,7 @@ in
         lua-language-server
       ];
       plugins = pluginList ++ cfg.extraPlugins;
-      extraLuaConfig = let
-        workspacesLua = builtins.concatStringsSep "\n" (
-          map (path: "  { name = \"" + (builtins.baseNameOf path) + "\", path = \"~/" + path + "\" },")
-            cfg.obsidianVaultPaths
-        );
-      in ''
-        vim.g.fireflake_obsidian_workspaces = {
-${workspacesLua}
-        }
-
+      extraLuaConfig = ''
         ${builtins.readFile ./neovim/lua/init.lua}
         ${cfg.extraLuaConfig}
       '';

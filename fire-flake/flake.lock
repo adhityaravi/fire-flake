@@ -59,11 +59,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1763315604,
-        "narHash": "sha256-LOQycG4yleRtN9YKjPGu3E828ksO9X83qcWHnPezSbw=",
+        "lastModified": 1769082072,
+        "narHash": "sha256-awTh6cYCh95kfJYruHaFiHVooV77cZkjwXdcwaTXTR8=",
         "owner": "adhityaravi",
         "repo": "nurpkgs",
-        "rev": "edb6ea67162f7b088648c91d2b112cca5754d099",
+        "rev": "96a798110861b221d72c48e089df17c7bf452996",
         "type": "github"
       },
       "original": {

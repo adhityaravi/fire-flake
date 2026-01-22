@@ -10,8 +10,6 @@
     ../../modules/home-manager/programs/lazygit.nix
     ../../modules/home-manager/programs/just.nix
     ../../modules/home-manager/programs/neovim.nix
-    ../../modules/home-manager/programs/obsidian.nix
-    ../../modules/home-manager/programs/goose.nix
     ../../modules/home-manager/programs/claude-code.nix
     ../../modules/home-manager/programs/fish.nix
     ../../modules/home-manager/programs/starship/starship.nix
@@ -71,8 +69,6 @@
   custom.neovim = {
     enable = true;
 
-    # obsidianVaultPaths = userVars.obsidian.vaultPaths;
-
     # Example: Add extra plugins
     #extraPlugins = with pkgs.vimPlugins; [
     #  catppuccin-nvim
@@ -83,26 +79,6 @@
     #  vim.cmd("colorscheme catppuccin")
     #  require("catppuccin").setup({})
     #'';
-  };
-
-  # Obsidian
-  custom.obsidian = {
-    enable = false;
-    # vaultPaths = userVars.obsidian.vaultPaths;
-  };
-
-  # Goose CLI
-  custom.goose = {
-    enable = false;
-    # # lead model
-    # leadProvider = "github_copilot";
-    # leadModel = "gpt-4.1";
-    # # worker model (using Copilot to avoid Anthropic API costs)
-    # provider = "github_copilot";
-    # model = "gpt-4o";
-    #extraEnv = {
-    #  GOOSE_TEMPERATURE = "0.7";
-    #};
   };
 
   # Claude Code CLI

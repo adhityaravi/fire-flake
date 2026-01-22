@@ -32,8 +32,8 @@ with pkgs.vimPlugins; [
   hydra-nvim
   auto-save-nvim
   # kulala-nvim  # kulala seems to be causing tressitter issues. i dont use it enough to care rn
-  # nurpkgs.goose-nvim  # goose-nvim seems to be not working with the latest goose-cli. disable for now.
   pkgs.vimPlugins.render-markdown-nvim
+  nurpkgs.skifree-nvim
 
   # UI
   lualine-nvim
@@ -79,7 +79,6 @@ with pkgs.vimPlugins; [
   nvim-spectre
   todo-comments-nvim
   grapple-nvim
-  # obsidian-nvim
 
   # File explorer
   nvim-tree-lua
