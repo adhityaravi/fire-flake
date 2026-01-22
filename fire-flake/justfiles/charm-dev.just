@@ -211,8 +211,8 @@ istio-tester-setup channel:
     juju deploy istio-ingress-k8s ingress --channel={{channel}} --trust
 
     # Deploy bookinfo sample apps from latest/edge
-    juju deploy bookinfo-productpage-k8s productpage --channel=latest/edge --trust
-    juju deploy bookinfo-details-k8s details --channel=latest/edge --trust
+    juju deploy bookinfo-productpage-k8s productpage --channel=latest/stable --trust
+    juju deploy bookinfo-details-k8s details --channel=latest/stable --trust
 
     # Integrate the charms
     juju integrate productpage:details details:details
