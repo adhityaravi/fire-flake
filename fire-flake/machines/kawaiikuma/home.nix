@@ -20,6 +20,8 @@
     ../../modules/home-manager/programs/semtools.nix
     ../../modules/home-manager/programs/tailscale.nix
     ../../modules/home-manager/programs/asciinema.nix
+    ../../modules/home-manager/programs/ksnip.nix
+    ../../modules/home-manager/programs/svg-term.nix
     ../../modules/home-manager/common.nix
   ];
 
@@ -152,4 +154,10 @@
 
   # Asciinema terminal recording
   custom.asciinema.enable = true;
+
+  # Ksnip screenshot and annotation tool
+  custom.ksnip.enable = true;
+
+  # SVG-term for asciinema to SVG conversion
+  custom.svg-term.enable = true;
 }
