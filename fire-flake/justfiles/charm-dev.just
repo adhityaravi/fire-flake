@@ -189,3 +189,48 @@ charmdev-nuke:
         echo "Unknown k8s flavor: {{k8s}}. Use 'microk8s' or 'ck8s'"
         exit 1
     fi
+
+# ====================================================================
+# ISTIO TESTER RECIPES
+# ====================================================================
+
+# Setup Istio test environment with bookinfo sample apps
+# Usage: jg istio-tester-setup 2/edge
+#        jg istio-tester-setup latest/edge
+istio-tester-setup channel:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Setting up Istio test environment with channel: {{channel}}"
+
+    # Create the istio-test model
+    juju add-model istio-test
+
+    # Deploy Istio charms from the specified channel
+    juju deploy istio-k8s istio --channel={{channel}} --trust
+    juju deploy istio-beacon-k8s beacon --channel={{channel}} --trust
+    juju deploy istio-ingress-k8s ingress --channel={{channel}} --trust
+
+    # Deploy bookinfo sample apps from latest/edge
+    juju deploy bookinfo-productpage-k8s productpage --channel=latest/edge --trust
+    juju deploy bookinfo-details-k8s details --channel=latest/edge --trust
+
+    # Integrate the charms
+    juju integrate productpage:details details:details
+    juju integrate productpage:service-mesh beacon:service-mesh
+    juju integrate details:service-mesh beacon:service-mesh
+    juju integrate productpage:ingress ingress:ingress
+
+    echo ""
+    echo "Istio test environment setup complete!"
+    echo "  - Model: istio-test"
+    echo "  - Istio channel: {{channel}}"
+    echo "  - Bookinfo apps: latest/edge"
+
+# Nuke Istio test environment
+# Usage: jg istio-tester-nuke
+istio-tester-nuke:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Nuking Istio test environment..."
+    juju destroy-model istio-test --force --destroy-storage --no-prompt
+    echo "Istio test environment nuked."
