@@ -27,6 +27,7 @@ in {
       '';
       interactiveShellInit = ''
         set -g fish_greeting ""
+        set -gx KUBECONFIG ~/.kube/config
         if type -q fortune && type -q cowsay && type -q lolcat
           fortune -a | cowsay
         end
@@ -38,6 +39,9 @@ in {
         hkk = "home-manager --impure switch --flake .#kawaiikuma";
         hnn = "home-manager --impure switch --flake .#nikoneko";
         hii = "home-manager --impure switch --flake .#ikiikiinu";
+      };
+      functions = {
+        w = "curl -s wttr.in/$argv[1]";
       };
     };
 

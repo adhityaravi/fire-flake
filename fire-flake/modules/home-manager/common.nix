@@ -37,6 +37,7 @@
         shellcheck
         tree
         nodejs
+        kubectl
       ];
       description = "Development tools shared across environments.";
     };

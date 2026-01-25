@@ -10,11 +10,9 @@ k8s := "microk8s"
 
 [private]
 charmdev-microk8s-install:
-    # Install Juju and MicroK8s
+    # Install Juju and MicroK8s (kubectl provided by nix)
     sudo snap install juju --channel=3.6/stable
     sudo snap install microk8s --channel=1.32/stable --classic
-    sudo snap alias microk8s.kubectl kubectl
-    sudo snap alias microk8s.kubectl k
 
 [private]
 charmdev-microk8s-setup:
@@ -47,19 +45,51 @@ charmdev-microk8s-juju-bootstrap:
 
 [private]
 charmdev-microk8s-export-kubeconfig:
-    # Save kubeconfig to user's home
+    #!/usr/bin/env bash
+    set -euo pipefail
     mkdir -p $HOME/.kube
-    sudo microk8s config > $HOME/.kube/config
+    MACHINE=$(hostname | grep -oE '(kuma|inu|neko)$')
+    # Export and rename to machine-specific names
+    sudo microk8s config | \
+        yq ".clusters[0].name = \"${MACHINE}-cluster\" |
+            .contexts[0].name = \"${MACHINE}\" |
+            .contexts[0].context.cluster = \"${MACHINE}-cluster\" |
+            .contexts[0].context.user = \"${MACHINE}-admin\" |
+            .users[0].name = \"${MACHINE}-admin\" |
+            .\"current-context\" = \"${MACHINE}\"" > /tmp/config-${MACHINE}-tmp
+    # Merge or create
+    if [ -f "$HOME/.kube/config" ]; then
+        # Remove old entries for this machine, then merge
+        yq "del(.clusters[] | select(.name == \"${MACHINE}-cluster\")) |
+            del(.contexts[] | select(.name == \"${MACHINE}\")) |
+            del(.users[] | select(.name == \"${MACHINE}-admin\"))" $HOME/.kube/config > /tmp/config-existing-tmp
+        yq eval-all 'select(fileIndex == 0) *+ select(fileIndex == 1) | .current-context = "'"${MACHINE}"'"' /tmp/config-existing-tmp /tmp/config-${MACHINE}-tmp > $HOME/.kube/config
+        rm -f /tmp/config-existing-tmp
+    else
+        mv /tmp/config-${MACHINE}-tmp $HOME/.kube/config
+    fi
+    rm -f /tmp/config-${MACHINE}-tmp
+    echo "Kubeconfig merged for ${MACHINE}"
 
 [private]
 charmdev-microk8s-nuke:
+    #!/usr/bin/env bash
+    set -euo pipefail
     # Destroy Juju controllers and remove Juju/MicroK8s
     sudo snap remove --purge juju || true
     sudo snap remove --purge microk8s || true
     rm -rf ~/.local/share/juju ~/.cache/juju ~/.config/juju
     sudo rm -rf /var/snap/juju /var/snap/microk8s
     sudo rm -rf /run/containerd
-    rm -f ~/.kube/config
+    # Remove only this machine's kubeconfig entries (preserve others)
+    MACHINE=$(hostname | grep -oE '(kuma|inu|neko)$')
+    if [ -f "$HOME/.kube/config" ]; then
+        yq "del(.clusters[] | select(.name == \"${MACHINE}-cluster\")) |
+            del(.contexts[] | select(.name == \"${MACHINE}\")) |
+            del(.users[] | select(.name == \"${MACHINE}-admin\"))" $HOME/.kube/config > /tmp/config-cleaned
+        mv /tmp/config-cleaned $HOME/.kube/config
+        echo "Removed ${MACHINE} entries from kubeconfig"
+    fi
 
 # ====================================================================
 # CANONICAL K8S RECIPES
@@ -108,12 +138,36 @@ charmdev-ck8s-juju-bootstrap:
 
 [private]
 charmdev-ck8s-export-kubeconfig:
-    # Save kubeconfig to user's home
+    #!/usr/bin/env bash
+    set -euo pipefail
     mkdir -p $HOME/.kube
-    sudo k8s config > $HOME/.kube/config
+    MACHINE=$(hostname | grep -oE '(kuma|inu|neko)$')
+    # Export and rename to machine-specific names
+    sudo k8s config | \
+        yq ".clusters[0].name = \"${MACHINE}-cluster\" |
+            .contexts[0].name = \"${MACHINE}\" |
+            .contexts[0].context.cluster = \"${MACHINE}-cluster\" |
+            .contexts[0].context.user = \"${MACHINE}-admin\" |
+            .users[0].name = \"${MACHINE}-admin\" |
+            .\"current-context\" = \"${MACHINE}\"" > /tmp/config-${MACHINE}-tmp
+    # Merge or create
+    if [ -f "$HOME/.kube/config" ]; then
+        # Remove old entries for this machine, then merge
+        yq "del(.clusters[] | select(.name == \"${MACHINE}-cluster\")) |
+            del(.contexts[] | select(.name == \"${MACHINE}\")) |
+            del(.users[] | select(.name == \"${MACHINE}-admin\"))" $HOME/.kube/config > /tmp/config-existing-tmp
+        yq eval-all 'select(fileIndex == 0) *+ select(fileIndex == 1) | .current-context = "'"${MACHINE}"'"' /tmp/config-existing-tmp /tmp/config-${MACHINE}-tmp > $HOME/.kube/config
+        rm -f /tmp/config-existing-tmp
+    else
+        mv /tmp/config-${MACHINE}-tmp $HOME/.kube/config
+    fi
+    rm -f /tmp/config-${MACHINE}-tmp
+    echo "Kubeconfig merged for ${MACHINE}"
 
 [private]
 charmdev-ck8s-nuke:
+    #!/usr/bin/env bash
+    set -euo pipefail
     # Destroy Juju controllers and remove Juju/Canonical K8s
     sudo snap remove --purge juju || true
     sudo snap remove --purge k8s || true
@@ -121,7 +175,15 @@ charmdev-ck8s-nuke:
     rm -rf ~/.local/share/juju ~/.cache/juju ~/.config/juju
     sudo rm -rf /var/snap/juju /var/snap/k8s
     sudo rm -rf /run/containerd
-    rm -f ~/.kube/config
+    # Remove only this machine's kubeconfig entries (preserve others)
+    MACHINE=$(hostname | grep -oE '(kuma|inu|neko)$')
+    if [ -f "$HOME/.kube/config" ]; then
+        yq "del(.clusters[] | select(.name == \"${MACHINE}-cluster\")) |
+            del(.contexts[] | select(.name == \"${MACHINE}\")) |
+            del(.users[] | select(.name == \"${MACHINE}-admin\"))" $HOME/.kube/config > /tmp/config-cleaned
+        mv /tmp/config-cleaned $HOME/.kube/config
+        echo "Removed ${MACHINE} entries from kubeconfig"
+    fi
 
 # ====================================================================
 # DEV TOOLING
