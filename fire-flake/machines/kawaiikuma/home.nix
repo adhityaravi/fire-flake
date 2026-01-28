@@ -63,6 +63,7 @@
     # NOTE: charm-dev requires sudo access and snaps.
     recipes.charm-dev = true;
     recipes.tailscale = true;
+    recipes.ephemeral-vm = true;
   };
 
   # Neovim

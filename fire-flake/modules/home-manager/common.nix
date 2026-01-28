@@ -82,6 +82,15 @@
       description = "Low-level system utilities (e.g. lsof, htop, iotop).";
     };
 
+    vmTools = lib.mkOption {
+      type = with lib.types; listOf package;
+      default = with pkgs; [
+        qemu
+        xorriso
+      ];
+      description = "Virtualization tools for ephemeral VMs (qemu, xorriso).";
+    };
+
     userTools = lib.mkOption {
       type = with lib.types; listOf package;
       default = [ ];
@@ -102,6 +111,7 @@
       ++ config.custom.common.mediaTools
       ++ config.custom.common.networkTools
       ++ config.custom.common.systemUtils
+      ++ config.custom.common.vmTools
       ++ config.custom.common.userTools;
   };
 }
