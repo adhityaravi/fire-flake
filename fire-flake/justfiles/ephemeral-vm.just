@@ -123,6 +123,9 @@ _ensure-cloudinit:
         "      - $SSH_PUBKEY" \
         "ssh_pwauth: false" \
         "hostname: camphor" \
+        "package_update: true" \
+        "packages:" \
+        "  - fastfetch" \
         "growpart:" \
         "  mode: auto" \
         "  devices: [/]" \
