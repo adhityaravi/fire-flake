@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, nurpkgs ? {}, ... }:
 
 {
   options.custom.common = {
@@ -38,6 +38,7 @@
         tree
         nodejs
         kubectl
+        nurpkgs.sqlit
       ];
       description = "Development tools shared across environments.";
     };
