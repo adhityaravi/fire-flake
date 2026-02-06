@@ -30,6 +30,7 @@
       type = with lib.types; listOf package;
       default = with pkgs; [
         jq
+        yq-go
         curl
         wget
         direnv
@@ -38,6 +39,7 @@
         tree
         nodejs
         kubectl
+        sqlite
         nurpkgs.sqlit
       ];
       description = "Development tools shared across environments.";

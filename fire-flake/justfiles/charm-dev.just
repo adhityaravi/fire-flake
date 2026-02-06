@@ -190,22 +190,18 @@ charmdev-ck8s-nuke:
 # ====================================================================
 
 charmdev-tools-setup:
-    # Tools to support Juju + charmcraft workflow
+    # Tools to support Juju + charmcraft workflow (jq + yq provided by nix)
     sudo snap install --classic charmcraft
     sudo snap install --classic rockcraft
     sudo snap install jhack --channel=latest/stable
     sudo snap install --classic astral-uv
-    sudo snap install yq
-    sudo snap install jq
 
 charmdev-tools-nuke:
-    # Remove all development tooling
+    # Remove all development tooling (jq + yq provided by nix, not snaps)
     sudo snap remove --purge charmcraft || true
     sudo snap remove --purge rockcraft || true
     sudo snap remove --purge jhack || true
     sudo snap remove --purge astral-uv || true
-    sudo snap remove --purge yq || true
-    sudo snap remove --purge jq || true
     sudo snap remove --purge just || true
 
 # ====================================================================

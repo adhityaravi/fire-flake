@@ -20,6 +20,7 @@
     ../../modules/home-manager/programs/asciinema.nix
     ../../modules/home-manager/programs/ksnip.nix
     ../../modules/home-manager/programs/svg-term.nix
+    ../../modules/home-manager/programs/uptimekit.nix
     ../../modules/home-manager/common.nix
   ];
 
@@ -137,4 +138,7 @@
 
   # SVG-term for asciinema to SVG conversion
   custom.svg-term.enable = true;
+
+  # Uptimekit for monitoring website/server health
+  custom.uptimekit.enable = true;
 }
