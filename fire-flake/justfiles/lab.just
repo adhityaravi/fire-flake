@@ -331,7 +331,8 @@ fan-pwm:
 fan-set FAN PWM:
     #!/usr/bin/env bash
     set -euo pipefail
-    HWMON="/sys/class/hwmon/hwmon3"
+    HWMON=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name" 2>/dev/null)" = "nct6798" ] && echo "$h" && break; done)
+    [ -z "$HWMON" ] && echo "Error: nct6798 hwmon not found" && exit 1
     echo "Setting fan{{ FAN }} to manual mode..."
     echo 1 | sudo tee "$HWMON/pwm{{ FAN }}_enable" > /dev/null
     echo "Setting PWM to {{ PWM }}/255..."
@@ -342,7 +343,8 @@ fan-set FAN PWM:
 fan-whisper:
     #!/usr/bin/env bash
     set -euo pipefail
-    HWMON="/sys/class/hwmon/hwmon3"
+    HWMON=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name" 2>/dev/null)" = "nct6798" ] && echo "$h" && break; done)
+    [ -z "$HWMON" ] && echo "Error: nct6798 hwmon not found" && exit 1
     for i in 1 2 3 4 5 6 7; do
         if [ -f "$HWMON/pwm${i}_enable" ]; then
             echo 1 | sudo tee "$HWMON/pwm${i}_enable" > /dev/null
@@ -355,7 +357,8 @@ fan-whisper:
 fan-quiet:
     #!/usr/bin/env bash
     set -euo pipefail
-    HWMON="/sys/class/hwmon/hwmon3"
+    HWMON=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name" 2>/dev/null)" = "nct6798" ] && echo "$h" && break; done)
+    [ -z "$HWMON" ] && echo "Error: nct6798 hwmon not found" && exit 1
     for i in 1 2 3 4 5 6 7; do
         if [ -f "$HWMON/pwm${i}_enable" ]; then
             echo 1 | sudo tee "$HWMON/pwm${i}_enable" > /dev/null
@@ -368,7 +371,8 @@ fan-quiet:
 fan-medium:
     #!/usr/bin/env bash
     set -euo pipefail
-    HWMON="/sys/class/hwmon/hwmon3"
+    HWMON=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name" 2>/dev/null)" = "nct6798" ] && echo "$h" && break; done)
+    [ -z "$HWMON" ] && echo "Error: nct6798 hwmon not found" && exit 1
     for i in 1 2 3 4 5 6 7; do
         if [ -f "$HWMON/pwm${i}_enable" ]; then
             echo 1 | sudo tee "$HWMON/pwm${i}_enable" > /dev/null
@@ -381,7 +385,8 @@ fan-medium:
 fan-full:
     #!/usr/bin/env bash
     set -euo pipefail
-    HWMON="/sys/class/hwmon/hwmon3"
+    HWMON=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name" 2>/dev/null)" = "nct6798" ] && echo "$h" && break; done)
+    [ -z "$HWMON" ] && echo "Error: nct6798 hwmon not found" && exit 1
     for i in 1 2 3 4 5 6 7; do
         if [ -f "$HWMON/pwm${i}_enable" ]; then
             echo 1 | sudo tee "$HWMON/pwm${i}_enable" > /dev/null
@@ -394,7 +399,8 @@ fan-full:
 fan-auto:
     #!/usr/bin/env bash
     set -euo pipefail
-    HWMON="/sys/class/hwmon/hwmon3"
+    HWMON=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name" 2>/dev/null)" = "nct6798" ] && echo "$h" && break; done)
+    [ -z "$HWMON" ] && echo "Error: nct6798 hwmon not found" && exit 1
     for i in 1 2 3 4 5 6 7; do
         if [ -f "$HWMON/pwm${i}_enable" ]; then
             echo 2 | sudo tee "$HWMON/pwm${i}_enable" > /dev/null 2>&1 || \
@@ -406,8 +412,9 @@ fan-auto:
 # Show full fan status (speeds, PWM values, modes)
 fan-info:
     #!/usr/bin/env bash
-    HWMON="/sys/class/hwmon/hwmon3"
-    echo "=== Fan Status ==="
+    HWMON=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name" 2>/dev/null)" = "nct6798" ] && echo "$h" && break; done)
+    [ -z "$HWMON" ] && echo "Error: nct6798 hwmon not found" && exit 1
+    echo "=== Fan Status (using $HWMON) ==="
     printf "%-6s %-8s %-10s %-12s\n" "Fan" "RPM" "PWM" "Mode"
     printf "%-6s %-8s %-10s %-12s\n" "---" "---" "---" "----"
     for i in 1 2 3 4 5 6 7; do
