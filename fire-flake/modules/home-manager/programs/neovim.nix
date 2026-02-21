@@ -43,7 +43,7 @@ in
         lua-language-server
       ];
       plugins = pluginList ++ cfg.extraPlugins;
-      extraLuaConfig = ''
+      initLua = ''
         ${builtins.readFile ./neovim/lua/init.lua}
         ${cfg.extraLuaConfig}
       '';

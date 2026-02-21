@@ -21,6 +21,7 @@
     ../../modules/home-manager/programs/ksnip.nix
     ../../modules/home-manager/programs/svg-term.nix
     ../../modules/home-manager/programs/uptimekit.nix
+    ../../modules/home-manager/programs/youtube-music-cli.nix
     ../../modules/home-manager/common.nix
   ];
 
@@ -141,4 +142,7 @@
 
   # Uptimekit for monitoring website/server health
   custom.uptimekit.enable = true;
+
+  # YouTube Music TUI player
+  custom.youtube-music-cli.enable = true;
 }
