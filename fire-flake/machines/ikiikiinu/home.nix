@@ -28,7 +28,12 @@
   };
 
   # Common CLI tools, fonts, dev tools
-  custom.common.enable = true;
+  custom.common = {
+    enable = true;
+    userTools = with pkgs; [
+      opentofu
+    ];
+  };
 
   # Git
   custom.git = {
@@ -73,4 +78,7 @@
 
   # Tailscale
   custom.tailscale.enable = true;
+
+  # SSH agent for headless server (no desktop keyring available)
+  services.ssh-agent.enable = true;
 }
