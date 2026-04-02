@@ -1,7 +1,5 @@
-require('mason').setup()
-require('mason-lspconfig').setup()
-
-local lspconfig = require('lspconfig')
+-- LSP servers are installed through Nix (see neovim.nix)
+-- Using Neovim 0.11+ built-in LSP configuration (vim.lsp.config)
 
 local servers = {
   "pyright",
@@ -15,27 +13,21 @@ local servers = {
   "lua_ls",
 }
 
-for _, lsp in ipairs(servers) do
-  local opts = {}
-
-  if lsp == "lua_ls" then
-    opts = {
-      settings = {
-        Lua = {
-          runtime = { version = "LuaJIT" },
-          diagnostics = { globals = { "vim" } },
-          workspace = {
-            library = vim.api.nvim_get_runtime_file("", true),
-            checkThirdParty = false,
-          },
-          telemetry = { enable = false },
-        }
-      }
+vim.lsp.config('lua_ls', {
+  settings = {
+    Lua = {
+      runtime = { version = "LuaJIT" },
+      diagnostics = { globals = { "vim" } },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file("", true),
+        checkThirdParty = false,
+      },
+      telemetry = { enable = false },
     }
-  end
+  }
+})
 
-  lspconfig[lsp].setup(opts)
-end
+vim.lsp.enable(servers)
 
 -- Keymaps
 local function telescope(cmd)

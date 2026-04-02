@@ -1,14 +1,12 @@
--- Ensure parser directory exists
-local parser_dir = vim.fn.stdpath("data") .. "/treesitter"
-vim.fn.mkdir(parser_dir, "p")
+-- treesitter parsers are installed through nix (see plugins.nix)
+require('nvim-treesitter').setup()
 
-require('nvim-treesitter.configs').setup {
-  -- treesitter dependencies are installed through nix. refer modules/home-manager/programs/neovim/plugins.nix for actual treesitter dependencies.
-  auto_install = false,   -- prevents runtime install attempts
-
-  -- Explicitly set parser install directory to prevent Nix store write attempts
-  parser_install_dir = parser_dir,
-
-  highlight = { enable = true },
-  indent = { enable = true },
-}
+-- Enable treesitter highlighting and indentation for all filetypes with parsers
+vim.api.nvim_create_autocmd('FileType', {
+  callback = function(ev)
+    if pcall(vim.treesitter.get_parser, ev.buf) then
+      vim.treesitter.start(ev.buf)
+      vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end
+  end,
+})

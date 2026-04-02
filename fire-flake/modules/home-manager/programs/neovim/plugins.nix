@@ -51,8 +51,6 @@ with pkgs.vimPlugins; [
 
   # LSP support
   nvim-lspconfig
-  mason-nvim
-  mason-lspconfig-nvim
   lspkind-nvim
 
   # Autocompletion

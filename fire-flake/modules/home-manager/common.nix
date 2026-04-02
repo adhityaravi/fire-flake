@@ -38,9 +38,13 @@
         shellcheck
         tree
         nodejs
+        python313
         kubectl
         sqlite
         nurpkgs.sqlit
+        pandoc
+        sops
+        age
       ];
       description = "Development tools shared across environments.";
     };
