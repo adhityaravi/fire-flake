@@ -36,9 +36,11 @@ in {
         jg = "just -g";
         snn = "kitten ssh 'adhitya.ravi@canonical.com'@nikoneko";
         sii = "kitten ssh ivdi@ikiikiinu";
+        sst = "kitten ssh ivdi@sushitrash";
         hkk = "home-manager --impure switch --flake .#kawaiikuma";
         hnn = "home-manager --impure switch --flake .#nikoneko";
         hii = "home-manager --impure switch --flake .#ikiikiinu";
+        hst = "home-manager --impure switch --flake .#sushitrash";
       };
       functions = {
         w = "curl -s wttr.in/$argv[1]";

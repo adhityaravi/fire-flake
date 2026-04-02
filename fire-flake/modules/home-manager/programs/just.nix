@@ -11,6 +11,7 @@ let
       ++ lib.optionals cfg.recipes.runner [(builtins.readFile ../../../justfiles/runner.just)]
       ++ lib.optionals cfg.recipes.lab [(builtins.readFile ../../../justfiles/lab.just)]
       ++ lib.optionals cfg.recipes.ephemeral-vm [(builtins.readFile ../../../justfiles/ephemeral-vm.just)]
+      ++ lib.optionals cfg.recipes.maki [(builtins.readFile ../../../justfiles/maki.just)]
     )
   );
 in
@@ -24,6 +25,7 @@ in
       runner = lib.mkEnableOption "Include GitHub Actions runner recipes";
       lab = lib.mkEnableOption "Include home lab recipes (ZFS, unattended-upgrades, NFS)";
       ephemeral-vm = lib.mkEnableOption "Include ephemeral VM recipes (quickget + QEMU)";
+      maki = lib.mkEnableOption "Include Maki infrastructure recipes (Canonical K8s)";
     };
   };
 
@@ -34,7 +36,7 @@ in
 
     # Install global justfile to ~/.config/just/justfile
     xdg.configFile."just/justfile" = lib.mkIf (
-      cfg.recipes.charm-dev || cfg.recipes.tailscale || cfg.recipes.runner || cfg.recipes.lab || cfg.recipes.ephemeral-vm
+      cfg.recipes.charm-dev || cfg.recipes.tailscale || cfg.recipes.runner || cfg.recipes.lab || cfg.recipes.ephemeral-vm || cfg.recipes.maki
     ) {
       source = globalJustfile;
     };

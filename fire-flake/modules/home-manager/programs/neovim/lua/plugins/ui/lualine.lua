@@ -123,6 +123,8 @@ require("lualine").setup({
             return "≽^•⩊•^≼ " .. hostname
           elseif hostname == "ikiikiinu" then
             return "▼・ᴥ・▼ " .. hostname
+          elseif hostname == "sushitrash" then
+            return ">゜)))彡 " .. hostname
           else
             return "[°□°] " .. hostname
           end

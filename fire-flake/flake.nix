@@ -96,6 +96,19 @@
           inherit userVars nurpkgs;
         };
       };
+
+      # sushitrash Intel NUC — dedicated Maki brain
+      sushitrash = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+
+        modules = [
+          ./machines/sushitrash/home.nix
+        ];
+
+        extraSpecialArgs = {
+          inherit userVars nurpkgs;
+        };
+      };
     };
   };
 }
