@@ -79,7 +79,10 @@
   };
 
   # Fish shell
-  custom.fish.enable = true;
+  custom.fish = {
+    enable = true;
+    setDefault = true;
+  };
 
   # Starship prompt
   custom.starship.enable = true;
