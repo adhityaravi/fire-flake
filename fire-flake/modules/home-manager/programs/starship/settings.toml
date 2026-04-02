@@ -155,6 +155,7 @@ case $(hostname) in
   nikoneko) echo " ≽^•⩊•^≼" ;;
   ikiikiinu) echo " ▼・ᴥ・▼" ;;
   sushitrash) echo " >゜)))彡" ;;
+  ramenslurp) echo " ズルズル" ;;
   *) echo "[°□°]" ;;
 esac
 '''

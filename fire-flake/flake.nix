@@ -109,6 +109,19 @@
           inherit userVars nurpkgs;
         };
       };
+
+      # ramenslurp Hetzner CX43 — Maki geographic HA peer
+      ramenslurp = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+
+        modules = [
+          ./machines/ramenslurp/home.nix
+        ];
+
+        extraSpecialArgs = {
+          inherit userVars nurpkgs;
+        };
+      };
     };
   };
 }
