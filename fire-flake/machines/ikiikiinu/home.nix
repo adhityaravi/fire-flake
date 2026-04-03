@@ -32,6 +32,7 @@
     enable = true;
     userTools = with pkgs; [
       opentofu
+      terragrunt
     ];
   };
 

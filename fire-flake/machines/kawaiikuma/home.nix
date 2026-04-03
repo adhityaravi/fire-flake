@@ -34,17 +34,10 @@
   # Its also possible to override the default common tools. Not recommended.
   custom.common = {
     enable = true;
-    # Example: add extra tools
-    #userTools = with pkgs; [
-    #  git
-    #  jq
-    #  curl
-    #  wget
-    #  direnv
-    #  nixpkgs-fmt
-    #  shellcheck
-    #  tree
-    #];
+    userTools = with pkgs; [
+      opentofu
+      terragrunt
+    ];
   };
 
   # Git

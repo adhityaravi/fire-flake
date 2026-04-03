@@ -47,6 +47,8 @@
       shellcheck
       sops
       age
+      opentofu
+      terragrunt
     ];
   };
 
