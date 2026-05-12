@@ -31,15 +31,16 @@ in
       viAlias = true;
       vimdiffAlias = true;
       withNodeJs = true;
+      withPython3 = false;
       extraPackages = with pkgs; [
         pyright
         gopls
         terraform-ls
         nixd
-        nodePackages.bash-language-server
-        nodePackages.vscode-langservers-extracted
+        bash-language-server
+        vscode-langservers-extracted
         dockerfile-language-server
-        nodePackages.yaml-language-server
+        yaml-language-server
         lua-language-server
       ];
       plugins = pluginList ++ cfg.extraPlugins;

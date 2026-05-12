@@ -82,11 +82,7 @@ with pkgs.vimPlugins; [
   nvim-tree-lua
   oil-nvim
 
-  # Debugging
-  nvim-dap
-  nvim-dap-python
-  nvim-dap-go
-  nvim-dap-ui
+  # Testing
   neotest
   neotest-go
   neotest-python

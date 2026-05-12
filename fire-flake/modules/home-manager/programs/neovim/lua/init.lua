@@ -20,6 +20,17 @@ vim.opt.termguicolors = true
 vim.opt.fillchars:append({ vert = "│" }) -- or "┃", "▕", etc.
 vim.o.shell = "fish" -- Set default shell to fish
 
+-- Workaround: nvim 0.12 enables kitty keyboard protocol key-release events,
+-- which several terminals report incorrectly, causing Enter/Tab/Backspace to
+-- fire twice (e.g. directory expand+collapse in oil/nvim-tree).
+-- See https://github.com/neovim/neovim/issues/32143
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function() io.stdout:write("\027[>1u") end,
+})
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  callback = function() io.stdout:write("\027[<1u") end,
+})
+
 -- Load saved colorscheme or use default
 local colorscheme_file = vim.fn.stdpath("state") .. "/colorscheme"
 local colorscheme = "doom-one" -- default
@@ -82,7 +93,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
 local lazy_plugins = {
   "plugins.search.telescope",
   "plugins.explorer.nvimtree",
-  "plugins.debug.dap",
   "plugins.debug.neotest",
   "plugins.git.git",
   "plugins.ui.persistence",
